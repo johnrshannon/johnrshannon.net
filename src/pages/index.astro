@@ -1,11 +1,270 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const projects = [
+  {
+    name: "Project One",
+    description: "A short description of what this project does and why it's interesting.",
+    url: "https://github.com/johnrshannon",
+    tags: ["TypeScript", "Node.js"],
+  },
+  {
+    name: "Project Two",
+    description: "A short description of what this project does and why it's interesting.",
+    url: "https://github.com/johnrshannon",
+    tags: ["Python", "AWS"],
+  },
+  {
+    name: "Project Three",
+    description: "A short description of what this project does and why it's interesting.",
+    url: "https://github.com/johnrshannon",
+    tags: ["React", "TypeScript"],
+  },
+];
 ---
 
 <Layout>
-	<Welcome />
+  <nav>
+    <div class="container nav-inner">
+      <span class="nav-name">John Shannon</span>
+      <div class="nav-links">
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+        <a href="https://github.com/johnrshannon" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <p class="hero-eyebrow">Hi, I'm John</p>
+      <h1 class="hero-headline">I build software.</h1>
+      <p class="hero-sub">Engineer. Problem solver. Curious about everything.</p>
+      <div class="hero-actions">
+        <a href="#projects" class="btn btn-primary">See my work</a>
+        <a href="#contact" class="btn btn-ghost">Get in touch</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="projects" id="projects">
+    <div class="container">
+      <h2 class="section-title">Projects</h2>
+      <div class="project-grid">
+        {projects.map((project) => (
+          <a href={project.url} target="_blank" rel="noopener" class="project-card">
+            <div class="project-card-inner">
+              <h3>{project.name}</h3>
+              <p>{project.description}</p>
+              <div class="tags">
+                {project.tags.map((tag) => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="container">
+      <h2 class="section-title">Get in touch</h2>
+      <p class="contact-sub">I'm always open to interesting conversations.</p>
+      <a href="mailto:john.ryland.shannon@gmail.com" class="btn btn-primary">
+        john.ryland.shannon@gmail.com
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <span>© 2026 John Shannon</span>
+    </div>
+  </footer>
 </Layout>
+
+<style>
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* Nav */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+
+  .nav-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .nav-links a:hover {
+    color: var(--text);
+  }
+
+  /* Hero */
+  .hero {
+    padding: 8rem 0 6rem;
+  }
+
+  .hero-eyebrow {
+    font-size: 1rem;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-headline {
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-sub {
+    font-size: 1.2rem;
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    max-width: 480px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: opacity 0.15s;
+  }
+
+  .btn:hover {
+    opacity: 0.8;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0a0a0a;
+  }
+
+  .btn-ghost {
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  /* Projects */
+  .projects {
+    padding: 5rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 2.5rem;
+  }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .project-card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+
+  .project-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .project-card-inner {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .project-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .project-card p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: auto;
+  }
+
+  .tag {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* Contact */
+  .contact {
+    padding: 5rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .contact-sub {
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+</style>
