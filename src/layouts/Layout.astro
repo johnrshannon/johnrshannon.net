@@ -14,7 +14,7 @@ const { title = "John Shannon" } = Astro.props;
     <title>{title}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
   </head>
   <body>
     <slot />
@@ -35,16 +35,18 @@ const { title = "John Shannon" } = Astro.props;
     --text: #f0f0f0;
     --muted: #666;
     --accent: #6ee7b7;
-    --font: 'Inter', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-display: 'Space Grotesk', sans-serif;
   }
 
   html {
     background: var(--bg);
     color: var(--text);
-    font-family: var(--font);
+    font-family: var(--font-body);
     font-size: 16px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
   }
 
   body {
