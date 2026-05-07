@@ -21,13 +21,20 @@ const projects = [
     tags: ["React", "TypeScript"],
   },
 ];
+
+const skills = [
+  "Python", "Bash", "SQL", "TypeScript",
+  "Docker", "Kubernetes", "Terraform", "Ansible",
+  "AWS", "CI/CD", "PostgreSQL", "Linux",
+];
 ---
 
 <Layout>
   <nav>
     <div class="container nav-inner">
-      <span class="nav-name">John Shannon</span>
+      <a href="#" class="nav-name">John Shannon</a>
       <div class="nav-links">
+        <a href="#about">About</a>
         <a href="#projects">Projects</a>
         <a href="#contact">Contact</a>
         <a href="https://github.com/johnrshannon" target="_blank" rel="noopener">GitHub ↗</a>
@@ -40,15 +47,41 @@ const projects = [
       <div class="hero-text">
         <p class="hero-eyebrow">Hi, I'm John</p>
         <h1 class="hero-headline">I build<br/>software.</h1>
-        <p class="hero-sub">Engineer. Problem solver. Curious about everything.</p>
+        <p class="hero-sub">Writes code. Plays guitar. Flosses religiously.</p>
         <div class="hero-actions">
           <a href="#projects" class="btn btn-primary">See my work</a>
           <a href="#contact" class="btn btn-ghost">Get in touch</a>
         </div>
       </div>
       <div class="hero-photo">
-        <div class="photo-placeholder">
-          <span>JS</span>
+        <img src="/profile.jpg" alt="John Shannon" class="profile-photo" />
+      </div>
+    </div>
+  </section>
+
+  <section class="about reveal" id="about">
+    <div class="container about-inner">
+      <div class="about-text">
+        <h2 class="section-title">About</h2>
+        <p>
+          I'm a software engineer based in Colorado, where I've lived since 2014.
+          I specialize in the unglamorous but important stuff — getting systems to
+          actually run reliably in production. Containers, pipelines, cloud
+          infrastructure, data at scale. I've been doing this long enough to have
+          strong opinions and short enough to still be surprised sometimes.
+        </p>
+        <p>
+          Outside of work I cook probably too ambitiously for a Tuesday, play guitar
+          badly enough to stay humble, and take dental hygiene more seriously than
+          most people I know. Cancer survivor. Math nerd. Generally fine.
+        </p>
+      </div>
+      <div class="about-skills">
+        <h3 class="skills-label">Technologies</h3>
+        <div class="skills-grid">
+          {skills.map((skill) => (
+            <span class="skill-tag">{skill}</span>
+          ))}
         </div>
       </div>
     </div>
@@ -86,10 +119,13 @@ const projects = [
   </section>
 
   <footer>
-    <div class="container">
+    <div class="container footer-inner">
       <span>© 2026 John Shannon</span>
+      <a href="#" class="back-to-top">Back to top ↑</a>
     </div>
   </footer>
+
+  <button class="scroll-top" id="scrollTop" aria-label="Back to top">↑</button>
 </Layout>
 
 <style>
@@ -191,21 +227,13 @@ const projects = [
     animation: fadeUp 0.6s 0.15s ease both;
   }
 
-  .photo-placeholder {
-    width: 220px;
-    height: 220px;
+  .profile-photo {
+    width: 260px;
+    height: auto;
     border-radius: 16px;
-    background: linear-gradient(135deg, #1a2a24 0%, #0d1f18 100%);
-    border: 1px solid #2a4a3a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-display);
-    font-size: 3rem;
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: -0.02em;
+    border: 1px solid var(--border);
     box-shadow: 0 0 60px rgba(110, 231, 183, 0.06);
+    display: block;
   }
 
   /* Buttons */
@@ -231,6 +259,56 @@ const projects = [
   .btn-ghost {
     border: 1px solid var(--border);
     color: var(--text);
+  }
+
+  /* About */
+  .about {
+    padding: 5rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .about-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .about-text p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+
+  .about-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .skills-label {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .skill-tag {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 500;
   }
 
   /* Projects */
@@ -325,6 +403,54 @@ const projects = [
     color: var(--muted);
   }
 
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .back-to-top {
+    color: var(--muted);
+    font-size: 0.8rem;
+    transition: color 0.15s;
+  }
+
+  .back-to-top:hover {
+    color: var(--text);
+  }
+
+  /* Scroll to top button */
+  .scroll-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, color 0.2s, border-color 0.2s;
+    z-index: 50;
+  }
+
+  .scroll-top.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .scroll-top:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
   /* Animations */
   @keyframes fadeUp {
     from {
@@ -359,20 +485,24 @@ const projects = [
       order: -1;
     }
 
-    .photo-placeholder {
-      width: 120px;
-      height: 120px;
-      font-size: 2rem;
+    .profile-photo {
+      width: 140px;
       border-radius: 12px;
     }
 
     .nav-links {
       gap: 1.25rem;
     }
+
+    .about-inner {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
   }
 </style>
 
 <script>
+  // Scroll reveal
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -383,6 +513,18 @@ const projects = [
     },
     { threshold: 0.1 }
   );
-
   document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+  // Scroll to top button
+  const scrollBtn = document.getElementById('scrollTop');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) {
+      scrollBtn?.classList.add('visible');
+    } else {
+      scrollBtn?.classList.remove('visible');
+    }
+  });
+  scrollBtn?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 </script>
