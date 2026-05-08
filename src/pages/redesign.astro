@@ -192,6 +192,8 @@ try {
   .line-muted { color: var(--muted); }
   .line-accent { color: var(--accent); }
   .line-error { color: var(--error); }
+  .ls-clickable { cursor: pointer; transition: color 0.15s; }
+  .ls-clickable:hover { color: var(--accent); }
 
   .input-row {
     display: flex;
@@ -768,6 +770,15 @@ try {
     }
   }
 
+  // ── ls clickable entries ─────────────────────────────────────────
+  function makeLsLines(lines: string[]): string[] {
+    return lines.map(line => line.replace(/(\s{2,})(\S+\/?)$/, (_, spaces, name) => {
+      const isDir = name.endsWith('/');
+      const cmd = isDir ? `cd ${name.slice(0, -1)}` : `cat ${name}`;
+      return `${spaces}<span class="ls-clickable" data-cmd="${cmd}">${name}</span>`;
+    }));
+  }
+
   // ── README renderer ──────────────────────────────────────────────
   function renderReadme(lines: string[]): string[] {
     return lines.map(line => {
@@ -1014,7 +1025,7 @@ try {
         appendOutput(['<span class="line-error">no such directory</span>']);
       } else {
         setDir('~/projects');
-        appendOutput(dirContents['~/projects']);
+        appendOutput(makeLsLines(dirContents['~/projects']));
       }
       scrollBottom();
       return;
@@ -1026,7 +1037,7 @@ try {
       } else {
         const newDir = `~/projects/${cdProjectMatch[1]}`;
         setDir(newDir);
-        appendOutput(dirContents[newDir]);
+        appendOutput(makeLsLines(dirContents[newDir]));
       }
       scrollBottom();
       return;
@@ -1034,7 +1045,7 @@ try {
     if (lower === 'cd ..') {
       if (currentDir.startsWith('~/projects/')) {
         setDir('~/projects');
-        appendOutput(dirContents['~/projects']);
+        appendOutput(makeLsLines(dirContents['~/projects']));
       } else {
         setDir('~');
       }
@@ -1051,7 +1062,8 @@ try {
     if (lower === 'ls' || lower === 'ls -la' || lower === 'ls -l') {
       const contents = dirContents[currentDir] ?? [];
       const showHidden = lower.includes('-la') || lower.includes('-a');
-      appendOutput(showHidden ? contents : contents.filter(l => !l.includes('.secrets')));
+      const filtered = showHidden ? contents : contents.filter(l => !l.includes('.secrets'));
+      appendOutput(makeLsLines(filtered));
       scrollBottom();
       return;
     }
@@ -1194,6 +1206,15 @@ try {
   });
 
   terminal.addEventListener('click', () => cmdInput.focus());
+
+  outputEl.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    if (target.classList.contains('ls-clickable')) {
+      e.stopPropagation();
+      const cmd = target.dataset.cmd ?? '';
+      if (cmd) { runCommand(cmd); cmdInput.focus(); }
+    }
+  });
 
   // ── Typewriter intro ─────────────────────────────────────────────
   async function typewriter(text: string, el: HTMLElement, speed = 30): Promise<void> {
