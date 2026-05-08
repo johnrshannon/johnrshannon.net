@@ -192,8 +192,8 @@ try {
   .line-muted { color: var(--muted); }
   .line-accent { color: var(--accent); }
   .line-error { color: var(--error); }
-  .ls-clickable { cursor: pointer; transition: color 0.15s; }
-  .ls-clickable:hover { color: var(--accent); }
+  :global(.ls-clickable) { cursor: pointer; transition: color 0.15s; }
+  :global(.ls-clickable:hover) { color: var(--prompt); }
 
   .input-row {
     display: flex;
