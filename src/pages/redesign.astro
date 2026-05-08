@@ -68,7 +68,7 @@ try {
         <span class="suggestions-label">try →</span>
         <button data-cmd="whoami">whoami</button>
         <button data-cmd="man john">man john</button>
-        <button data-cmd="ls">ls</button>
+        <button data-cmd="cd projects/">cd projects/</button>
         <button data-cmd="cat skills.txt">cat skills.txt</button>
         <button data-cmd="git log">git log</button>
         <button data-cmd="help">help</button>
@@ -406,9 +406,18 @@ try {
       '<span class="line-muted">-rw-------</span>  .secrets',
     ],
     '~/projects': [
-      '<span class="line-accent">drwxr-xr-x</span>  project-one/',
-      '<span class="line-accent">drwxr-xr-x</span>  project-two/',
-      '<span class="line-accent">drwxr-xr-x</span>  project-three/',
+      '<span class="line-accent">drwxr-xr-x</span>  sentry-gate/',
+      '<span class="line-accent">drwxr-xr-x</span>  pipeline-delta/',
+      '<span class="line-accent">drwxr-xr-x</span>  burndown/',
+    ],
+    '~/projects/sentry-gate': [
+      '<span class="line-muted">-rw-r--r--</span>  README.md',
+    ],
+    '~/projects/pipeline-delta': [
+      '<span class="line-muted">-rw-r--r--</span>  README.md',
+    ],
+    '~/projects/burndown': [
+      '<span class="line-muted">-rw-r--r--</span>  README.md',
     ],
   };
 
@@ -435,6 +444,47 @@ try {
     'contact.txt': [
       'email   john.ryland.shannon@gmail.com',
       'github  github.com/johnrshannon',
+    ],
+  };
+
+  const projectFiles: Record<string, string[]> = {
+    '~/projects/sentry-gate/README.md': [
+      '# sentry-gate',
+      '',
+      'A Kubernetes admission controller that enforces observability',
+      'standards across all workloads at deploy time.',
+      '',
+      'Rejects pods missing liveness/readiness probes, resource limits,',
+      'or required logging labels. Configured via CRD — no restarts needed.',
+      '',
+      'stack    Go · Kubernetes · controller-runtime · Helm',
+      'status   production · ~40 deployments gated daily',
+    ],
+    '~/projects/pipeline-delta/README.md': [
+      '# pipeline-delta',
+      '',
+      'Lightweight change data capture for PostgreSQL.',
+      'Tails the WAL and streams row-level changes to a configurable',
+      'set of sinks: S3, Redshift, or a Kafka topic.',
+      '',
+      'Handles schema migrations gracefully. Sub-second latency',
+      'at modest throughput. No Debezium, no JVM.',
+      '',
+      'stack    Python · PostgreSQL logical replication · boto3',
+      'status   running in two environments, handles ~2M events/day',
+    ],
+    '~/projects/burndown/README.md': [
+      '# burndown',
+      '',
+      'Terminal dashboard for SRE on-call metrics.',
+      'Pulls from PagerDuty and Datadog to show error budget',
+      'burn rate, MTTR, and incident frequency over rolling windows.',
+      '',
+      'Fits in a tmux pane. Refreshes every 60s.',
+      'Built because I was tired of opening four browser tabs at 2am.',
+      '',
+      'stack    Python · curses · PagerDuty API · Datadog API',
+      'status   personal use · open to sharing if you ask nicely',
     ],
   };
 
@@ -601,7 +651,7 @@ try {
   function appendCommandLine(cmd: string) {
     const d = document.createElement('div');
     d.className = 'line-cmd';
-    d.innerHTML = `<span class="line-prompt">${currentDir === '~' ? 'john@shannon ~ %' : 'john@shannon ~/projects %'}</span><span class="line-cmd-text">&nbsp;${cmd}</span>`;
+    d.innerHTML = `<span class="line-prompt">john@shannon ${currentDir} %</span><span class="line-cmd-text">&nbsp;${cmd}</span>`;
     outputEl.appendChild(d);
   }
 
@@ -622,7 +672,7 @@ try {
   let vimCurrentFile = '';
 
   function openVim(filename: string) {
-    const content = files[filename];
+    const content = projectFiles[`${currentDir}/${filename}`] ?? files[filename];
     if (!content) {
       appendOutput([`<span class="line-error">vim: ${filename}: No such file or directory</span>`]);
       return;
@@ -954,8 +1004,23 @@ try {
       scrollBottom();
       return;
     }
+    const projectDirs = ['sentry-gate', 'pipeline-delta', 'burndown'];
+    const cdProjectMatch = lower.match(/^cd (sentry-gate|pipeline-delta|burndown)\/?$/);
+    if (cdProjectMatch) {
+      if (currentDir !== '~/projects') {
+        appendOutput([`<span class="line-error">cd: ${cdProjectMatch[1]}: No such file or directory</span>`]);
+      } else {
+        setDir(`~/projects/${cdProjectMatch[1]}`);
+      }
+      scrollBottom();
+      return;
+    }
     if (lower === 'cd ..') {
-      setDir('~');
+      if (currentDir.startsWith('~/projects/')) {
+        setDir('~/projects');
+      } else {
+        setDir('~');
+      }
       scrollBottom();
       return;
     }
@@ -978,7 +1043,8 @@ try {
     const catMatch = lower.match(/^(?:cat|less|more)\s+(.+)$/);
     if (catMatch) {
       const filename = catMatch[1].trim();
-      const content = files[filename];
+      const fullPath = `${currentDir}/${filename}`;
+      const content = projectFiles[fullPath] ?? files[filename];
       if (filename === '.secrets') {
         appendOutput(['<span class="line-error">permission denied.</span>']);
       } else if (!content) {
