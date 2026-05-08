@@ -64,6 +64,7 @@ try {
           <div id="vimCmdLine" class="vim-cmdline"></div>
         </div>
       </div>
+      <button id="homeBtn" class="home-btn" style="display:none">⌂ home</button>
       <div class="suggestions" id="suggestions">
         <span class="suggestions-label">try →</span>
         <button data-cmd="whoami">whoami</button>
@@ -320,6 +321,25 @@ try {
     opacity: 0.75;
   }
 
+  /* Home button */
+  .home-btn {
+    font-family: var(--font);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.3rem 0.75rem;
+    background: transparent;
+    border: 1px solid var(--prompt);
+    border-radius: 6px;
+    color: var(--prompt);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    align-self: center;
+  }
+
+  .home-btn:hover {
+    background: rgba(74, 158, 255, 0.08);
+  }
+
   /* Suggestions */
   .suggestions {
     display: flex;
@@ -383,6 +403,7 @@ try {
   const terminal   = document.getElementById('terminal')!;
   const promptEl   = document.getElementById('prompt')!;
   const titleLabel = document.getElementById('titlebarLabel')!;
+  const homeBtn   = document.getElementById('homeBtn') as HTMLButtonElement;
   const vimOverlay = document.getElementById('vimOverlay')!;
   const vimContent = document.getElementById('vimContent')!;
   const vimFilename  = document.getElementById('vimFilename')!;
@@ -397,7 +418,15 @@ try {
     const label = `john@shannon ${dir} %\u00a0`;
     promptEl.textContent = label;
     titleLabel.textContent = `john@shannon: ${dir}`;
+    homeBtn.style.display = dir === '~' ? 'none' : 'inline-block';
   }
+
+  homeBtn.addEventListener('click', () => {
+    setDir('~');
+    appendOutput(makeLsLines(dirContents['~'], fileStyles['~'] ?? {}));
+    scrollBottom();
+    cmdInput.focus();
+  });
 
   const dirContents: Record<string, string[]> = {
     '~': [
@@ -405,7 +434,6 @@ try {
       '<span class="line-muted">drwxr-xr-x</span>  dotfiles/',
       '<span class="line-muted">drwxr-xr-x</span>  scripts/',
       '<span class="line-muted">drwxr-xr-x</span>  oncall/',
-      '<span class="line-muted">-rwxr-xr-x</span>  about.txt',
       '<span class="line-muted">-rwxr-xr-x</span>  skills.txt',
       '<span class="line-muted">-rw-r--r--</span>  TODO.md',
       '<span class="line-muted">-rw-r--r--</span>  reads.txt',
@@ -438,40 +466,29 @@ try {
     ],
   };
 
-  const fileColors: Record<string, Record<string, string>> = {
+  const fileStyles: Record<string, Record<string, string>> = {
     '~': {
-      'projects/':  'var(--prompt)',
-      'dotfiles/':  'var(--prompt)',
-      'scripts/':   'var(--prompt)',
-      'oncall/':    'var(--prompt)',
-      'about.txt':  'var(--accent)',
-      'skills.txt': 'var(--accent)',
-      '.secrets':   'var(--error)',
+      'projects/':  'color:var(--prompt);font-weight:700;font-size:1.08em',
+      'dotfiles/':  'color:var(--prompt)',
+      'scripts/':   'color:var(--prompt)',
+      'oncall/':    'color:var(--prompt)',
+      'skills.txt': 'color:var(--accent);font-weight:700;font-size:1.08em',
+      '.secrets':   'color:var(--error)',
     },
     '~/projects': {
-      'sentry-gate/':   'var(--prompt)',
-      'pipeline-delta/': 'var(--prompt)',
-      'burndown/':       'var(--prompt)',
+      'sentry-gate/':    'color:var(--prompt)',
+      'pipeline-delta/': 'color:var(--prompt)',
+      'burndown/':       'color:var(--prompt)',
     },
     '~/scripts': {
-      'deploy.sh':          'var(--accent)',
-      'backup.sh':          'var(--accent)',
-      'check-services.sh':  'var(--accent)',
+      'deploy.sh':         'color:var(--accent)',
+      'backup.sh':         'color:var(--accent)',
+      'check-services.sh': 'color:var(--accent)',
     },
   };
 
   // ── File contents (shared by cat / less / more / vim) ────────────
   const files: Record<string, string[]> = {
-    'about.txt': [
-      'Born 1987. Colorado since 2014.',
-      '',
-      'Senior Site Reliability Engineer. I keep software alive',
-      'in production. That means keeping the stack reliable,',
-      'observable, and recoverable.',
-      '',
-      'I play guitar, cook experimentally, and floss religiously.',
-      'Math nerd. Cancer survivor.',
-    ],
     'skills.txt': [
       'languages    Python · Bash · SQL · TypeScript',
       'cloud        AWS · Terraform · Ansible',
@@ -1011,13 +1028,13 @@ try {
   }
 
   // ── ls clickable entries ─────────────────────────────────────────
-  function makeLsLines(lines: string[], colors: Record<string, string> = {}): string[] {
+  function makeLsLines(lines: string[], styles: Record<string, string> = {}): string[] {
     return lines.map(line => line.replace(/(\s{2,})(\S+\/?)$/, (_, spaces, name) => {
       const isDir = name.endsWith('/');
       const cmd = isDir ? `cd ${name.slice(0, -1)}` : `cat ${name}`;
-      const color = colors[name] ?? (isDir ? 'var(--prompt)' : '');
-      const style = color ? ` style="color:${color}"` : '';
-      return `${spaces}<span class="ls-clickable" data-cmd="${cmd}"${style}>${name}</span>`;
+      const style = styles[name] ?? (isDir ? 'color:var(--prompt)' : '');
+      const styleAttr = style ? ` style="${style}"` : '';
+      return `${spaces}<span class="ls-clickable" data-cmd="${cmd}"${styleAttr}>${name}</span>`;
     }));
   }
 
@@ -1267,7 +1284,7 @@ try {
         appendOutput(['<span class="line-error">no such directory</span>']);
       } else {
         setDir('~/projects');
-        appendOutput(makeLsLines(dirContents['~/projects'], fileColors['~/projects'] ?? {}));
+        appendOutput(makeLsLines(dirContents['~/projects'], fileStyles['~/projects'] ?? {}));
       }
       scrollBottom();
       return;
@@ -1279,7 +1296,7 @@ try {
       } else {
         const newDir = `~/${cdHomeDirMatch[1]}`;
         setDir(newDir);
-        appendOutput(makeLsLines(dirContents[newDir], fileColors[newDir] ?? {}));
+        appendOutput(makeLsLines(dirContents[newDir], fileStyles[newDir] ?? {}));
       }
       scrollBottom();
       return;
@@ -1291,7 +1308,7 @@ try {
       } else {
         const newDir = `~/projects/${cdProjectMatch[1]}`;
         setDir(newDir);
-        appendOutput(makeLsLines(dirContents[newDir], fileColors[newDir] ?? {}));
+        appendOutput(makeLsLines(dirContents[newDir], fileStyles[newDir] ?? {}));
       }
       scrollBottom();
       return;
@@ -1299,10 +1316,10 @@ try {
     if (lower === 'cd ..') {
       if (currentDir.startsWith('~/projects/')) {
         setDir('~/projects');
-        appendOutput(makeLsLines(dirContents['~/projects'], fileColors['~/projects'] ?? {}));
+        appendOutput(makeLsLines(dirContents['~/projects'], fileStyles['~/projects'] ?? {}));
       } else if (currentDir !== '~') {
         setDir('~');
-        appendOutput(makeLsLines(dirContents['~'], fileColors['~'] ?? {}));
+        appendOutput(makeLsLines(dirContents['~'], fileStyles['~'] ?? {}));
       }
       scrollBottom();
       return;
@@ -1318,7 +1335,7 @@ try {
       const contents = dirContents[currentDir] ?? [];
       const showHidden = lower.includes('-la') || lower.includes('-a');
       const filtered = showHidden ? contents : contents.filter(l => !l.includes('.secrets'));
-      appendOutput(makeLsLines(filtered, fileColors[currentDir] ?? {}));
+      appendOutput(makeLsLines(filtered, fileStyles[currentDir] ?? {}));
       scrollBottom();
       return;
     }
@@ -1516,7 +1533,7 @@ try {
       scrollBottom();
     }
 
-    appendOutput(makeLsLines(dirContents['~'], fileColors['~'] ?? {}));
+    appendOutput(makeLsLines(dirContents['~'], fileStyles['~'] ?? {}));
     scrollBottom();
 
     inputRow.style.display = 'flex';
