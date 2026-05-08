@@ -68,7 +68,7 @@ try {
         <span class="suggestions-label">try →</span>
         <button data-cmd="whoami">whoami</button>
         <button data-cmd="man john">man john</button>
-        <button data-cmd="cd projects/">cd projects/</button>
+        <button data-cmd="cd projects">cd projects</button>
         <button data-cmd="cat skills.txt">cat skills.txt</button>
         <button data-cmd="git log">git log</button>
         <button data-cmd="help">help</button>
@@ -768,6 +768,20 @@ try {
     }
   }
 
+  // ── README renderer ──────────────────────────────────────────────
+  function renderReadme(lines: string[]): string[] {
+    return lines.map(line => {
+      if (line.startsWith('# ')) {
+        return `<span style="color:var(--accent);font-weight:700;font-size:1.1em;">${line.slice(2)}</span>`;
+      }
+      if (line.match(/^(stack|status)\s{2,}/)) {
+        const match = line.match(/^(\S+)(\s{2,})(.+)$/);
+        if (match) return `<span class="line-muted">${match[1]}</span>${match[2]}<span style="color:var(--prompt)">${match[3]}</span>`;
+      }
+      return line;
+    });
+  }
+
   // ── Fake apt install ─────────────────────────────────────────────
   async function fakeAptInstall(pkg: string) {
     const steps = [
@@ -1000,17 +1014,19 @@ try {
         appendOutput(['<span class="line-error">no such directory</span>']);
       } else {
         setDir('~/projects');
+        appendOutput(dirContents['~/projects']);
       }
       scrollBottom();
       return;
     }
-    const projectDirs = ['sentry-gate', 'pipeline-delta', 'burndown'];
     const cdProjectMatch = lower.match(/^cd (sentry-gate|pipeline-delta|burndown)\/?$/);
     if (cdProjectMatch) {
       if (currentDir !== '~/projects') {
         appendOutput([`<span class="line-error">cd: ${cdProjectMatch[1]}: No such file or directory</span>`]);
       } else {
-        setDir(`~/projects/${cdProjectMatch[1]}`);
+        const newDir = `~/projects/${cdProjectMatch[1]}`;
+        setDir(newDir);
+        appendOutput(dirContents[newDir]);
       }
       scrollBottom();
       return;
@@ -1018,6 +1034,7 @@ try {
     if (lower === 'cd ..') {
       if (currentDir.startsWith('~/projects/')) {
         setDir('~/projects');
+        appendOutput(dirContents['~/projects']);
       } else {
         setDir('~');
       }
@@ -1051,7 +1068,8 @@ try {
         appendOutput([`<span class="line-error">${catMatch[0].startsWith('cat') ? 'cat' : catMatch[0].startsWith('less') ? 'less' : 'more'}: ${filename}: No such file or directory</span>`]);
       } else {
         const isPaged = lower.startsWith('less') || lower.startsWith('more');
-        appendOutput([...content, ...(isPaged ? ['', '<span class="line-muted">-- END --</span>'] : [])]);
+        const rendered = filename === 'README.md' ? renderReadme(content) : content;
+        appendOutput([...rendered, ...(isPaged ? ['', '<span class="line-muted">-- END --</span>'] : [])]);
       }
       scrollBottom();
       return;
@@ -1138,7 +1156,7 @@ try {
       e.preventDefault();
       const val = cmdInput.value.toLowerCase();
       if (!val) return;
-      const match = getCompletions().find(c => c.startsWith(val) && c !== val);
+      const match = getCompletions().find(c => c.toLowerCase().startsWith(val) && c.toLowerCase() !== val);
       if (match) cmdInput.value = match;
     } else if (e.key === 'Enter') {
       const val = cmdInput.value;
