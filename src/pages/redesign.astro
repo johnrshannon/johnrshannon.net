@@ -59,10 +59,10 @@
   }
 
   :root {
-    --bg: #080808;
-    --win-bg: #0d0d0d;
-    --titlebar: #161616;
-    --border: #242424;
+    --bg: #080d14;
+    --win-bg: #0a0f18;
+    --titlebar: #0f1520;
+    --border: #1e2a3a;
     --text: #e8e8e8;
     --muted: #555;
     --accent: #6ee7b7;
@@ -73,7 +73,9 @@
 
   html, body {
     height: 100%;
-    background: var(--bg);
+    background-color: var(--bg);
+    background-image: radial-gradient(circle, #1e2a3a 1px, transparent 1px);
+    background-size: 28px 28px;
     font-family: var(--font);
     -webkit-font-smoothing: antialiased;
   }
