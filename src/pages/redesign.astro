@@ -1,4 +1,13 @@
 ---
+import { execSync } from 'child_process';
+
+let commitHash = 'unknown';
+let commitTime = 'unknown';
+
+try {
+  commitHash = execSync('git rev-parse --short HEAD').toString().trim();
+  commitTime = execSync('git log -1 --format=%cd --date=format:"%Y-%m-%d %H:%M UTC"').toString().trim();
+} catch (e) {}
 ---
 
 <!doctype html>
@@ -740,13 +749,15 @@
     const PROMPT_STR = 'john@shannon ~ %';
     const lines = [
       { text: `${PROMPT_STR} % ssh john@shannon.net`, cls: 'line-accent', delay: 0 },
-      { text: 'Connected.', cls: 'line-muted', delay: 400 },
-      { text: '', cls: '', delay: 200 },
-      { text: `Last login: ${new Date().toDateString()}`, cls: 'line-muted', delay: 100 },
-      { text: '', cls: '', delay: 100 },
-      { text: "Hey. I'm John.", cls: '', delay: 300 },
-      { text: "Type a command, or click a suggestion below.", cls: 'line-muted', delay: 100 },
-      { text: '', cls: '', delay: 200 },
+      { text: 'Connected.', cls: 'line-muted', delay: 130 },
+      { text: '', cls: '', delay: 60 },
+      { text: `Last login: ${new Date().toDateString()}`, cls: 'line-muted', delay: 30 },
+      { text: '', cls: '', delay: 30 },
+      { text: "Hey. I'm John.", cls: '', delay: 100 },
+      { text: "Type a command, or click a suggestion below.", cls: 'line-muted', delay: 30 },
+      { text: '', cls: '', delay: 30 },
+      { text: `build ${commitHash} · deployed ${commitTime}`, cls: 'line-muted', delay: 0 },
+      { text: '', cls: '', delay: 30 },
     ];
 
     for (const line of lines) {
@@ -754,7 +765,7 @@
       const div = document.createElement('div');
       div.className = line.cls;
       outputEl.appendChild(div);
-      await typewriter(line.text, div, line.text.startsWith(PROMPT_STR) ? 18 : 25);
+      await typewriter(line.text, div, line.text.startsWith(PROMPT_STR) ? 6 : 8);
       scrollBottom();
     }
 
