@@ -45,7 +45,8 @@ try {
             />
           </div>
         </div>
-        <!-- Vim overlay -->
+        <div id="buildInfo" data-hash={commitHash} data-time={commitTime} style="display:none"></div>
+    <!-- Vim overlay -->
         <div id="vimOverlay" class="vim-overlay">
           <div id="vimContent" class="vim-content"></div>
           <div class="vim-statusbar">
@@ -318,7 +319,11 @@ try {
   }
 </style>
 
-<script define:vars={{ commitHash, commitTime }}>
+<script>
+  const buildInfo  = document.getElementById('buildInfo') as HTMLElement;
+  const commitHash = buildInfo.dataset.hash ?? 'unknown';
+  const commitTime = buildInfo.dataset.time ?? 'unknown';
+
   const outputEl   = document.getElementById('output')!;
   const inputRow   = document.getElementById('inputRow')!;
   const cmdInput   = document.getElementById('cmdInput') as HTMLInputElement;
