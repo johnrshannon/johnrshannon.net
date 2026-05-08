@@ -22,6 +22,14 @@ try {
   </head>
   <body>
     <div class="desktop">
+      <div class="contact-bar">
+        <span class="contact-label">reach me</span>
+        <a href="mailto:john.ryland.shannon@gmail.com">john.ryland.shannon@gmail.com</a>
+        <span class="contact-sep">·</span>
+        <a href="https://github.com/johnrshannon" target="_blank" rel="noopener">github.com/johnrshannon</a>
+        <span class="contact-sep">·</span>
+        <a href="https://www.linkedin.com/in/john-shannon-1703878b/" target="_blank" rel="noopener">linkedin</a>
+      </div>
       <div class="window">
         <div class="titlebar">
           <div class="dots">
@@ -277,6 +285,36 @@ try {
     font-size: 0.875rem;
     min-height: 1.6rem;
     flex-shrink: 0;
+  }
+
+  /* Contact bar */
+  .contact-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font);
+    font-size: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 780px;
+    width: 100%;
+  }
+
+  .contact-label {
+    color: var(--muted);
+  }
+
+  .contact-sep {
+    color: var(--muted);
+  }
+
+  .contact-bar a {
+    color: var(--accent);
+    transition: opacity 0.15s;
+  }
+
+  .contact-bar a:hover {
+    opacity: 0.75;
   }
 
   /* Suggestions */
@@ -1085,15 +1123,6 @@ try {
       await typewriter(line.text, div, line.text.startsWith(PROMPT_STR) ? 12 : 16);
       scrollBottom();
     }
-
-    const contactDiv = document.createElement('div');
-    contactDiv.innerHTML = '<span class="line-muted">reach me:</span>  <span class="line-accent">john.ryland.shannon@gmail.com</span>  ·  <span class="line-accent">github.com/johnrshannon</span>  ·  <span class="line-accent">linkedin.com/in/john-shannon-1703878b</span>';
-    outputEl.appendChild(contactDiv);
-    scrollBottom();
-
-    await new Promise(r => setTimeout(r, 30));
-    const emptyDiv = document.createElement('div');
-    outputEl.appendChild(emptyDiv);
 
     inputRow.style.display = 'flex';
     cmdInput.focus();
