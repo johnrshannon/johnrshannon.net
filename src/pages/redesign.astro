@@ -401,26 +401,63 @@ try {
 
   const dirContents: Record<string, string[]> = {
     '~': [
-      '<span class="line-accent">drwxr-xr-x</span>  projects/',
-      '<span class="line-muted">-rw-r--r--</span>  about.txt',
-      '<span class="line-muted">-rw-r--r--</span>  skills.txt',
-      '<span class="line-muted">-rw-r--r--</span>  contact.txt',
+      '<span class="line-muted">drwxr-xr-x</span>  projects/',
+      '<span class="line-muted">drwxr-xr-x</span>  dotfiles/',
+      '<span class="line-muted">drwxr-xr-x</span>  scripts/',
+      '<span class="line-muted">drwxr-xr-x</span>  oncall/',
+      '<span class="line-muted">-rwxr-xr-x</span>  about.txt',
+      '<span class="line-muted">-rwxr-xr-x</span>  skills.txt',
+      '<span class="line-muted">-rw-r--r--</span>  TODO.md',
+      '<span class="line-muted">-rw-r--r--</span>  reads.txt',
+      '<span class="line-muted">-rw-r--r--</span>  Makefile',
+      '<span class="line-muted">-rw-r--r--</span>  .vimrc',
       '<span class="line-muted">-rw-------</span>  .secrets',
     ],
     '~/projects': [
-      '<span class="line-accent">drwxr-xr-x</span>  sentry-gate/',
-      '<span class="line-accent">drwxr-xr-x</span>  pipeline-delta/',
-      '<span class="line-accent">drwxr-xr-x</span>  burndown/',
+      '<span class="line-muted">drwxr-xr-x</span>  sentry-gate/',
+      '<span class="line-muted">drwxr-xr-x</span>  pipeline-delta/',
+      '<span class="line-muted">drwxr-xr-x</span>  burndown/',
     ],
-    '~/projects/sentry-gate': [
-      '<span class="line-muted">-rw-r--r--</span>  README.md',
+    '~/projects/sentry-gate':   ['<span class="line-muted">-rw-r--r--</span>  README.md'],
+    '~/projects/pipeline-delta': ['<span class="line-muted">-rw-r--r--</span>  README.md'],
+    '~/projects/burndown':       ['<span class="line-muted">-rw-r--r--</span>  README.md'],
+    '~/dotfiles': [
+      '<span class="line-muted">-rw-r--r--</span>  .vimrc',
+      '<span class="line-muted">-rw-r--r--</span>  .zshrc',
+      '<span class="line-muted">-rw-r--r--</span>  .gitconfig',
     ],
-    '~/projects/pipeline-delta': [
-      '<span class="line-muted">-rw-r--r--</span>  README.md',
+    '~/scripts': [
+      '<span class="line-muted">-rwxr-xr-x</span>  deploy.sh',
+      '<span class="line-muted">-rwxr-xr-x</span>  backup.sh',
+      '<span class="line-muted">-rwxr-xr-x</span>  check-services.sh',
     ],
-    '~/projects/burndown': [
-      '<span class="line-muted">-rw-r--r--</span>  README.md',
+    '~/oncall': [
+      '<span class="line-muted">-rw-r--r--</span>  runbook.md',
+      '<span class="line-muted">-rw-r--r--</span>  postmortem-2023-11.md',
+      '<span class="line-muted">-rw-r--r--</span>  postmortem-2024-03.md',
     ],
+  };
+
+  const fileColors: Record<string, Record<string, string>> = {
+    '~': {
+      'projects/':  'var(--prompt)',
+      'dotfiles/':  'var(--prompt)',
+      'scripts/':   'var(--prompt)',
+      'oncall/':    'var(--prompt)',
+      'about.txt':  'var(--accent)',
+      'skills.txt': 'var(--accent)',
+      '.secrets':   'var(--error)',
+    },
+    '~/projects': {
+      'sentry-gate/':   'var(--prompt)',
+      'pipeline-delta/': 'var(--prompt)',
+      'burndown/':       'var(--prompt)',
+    },
+    '~/scripts': {
+      'deploy.sh':          'var(--accent)',
+      'backup.sh':          'var(--accent)',
+      'check-services.sh':  'var(--accent)',
+    },
   };
 
   // ── File contents (shared by cat / less / more / vim) ────────────
@@ -447,7 +484,68 @@ try {
       'email   john.ryland.shannon@gmail.com',
       'github  github.com/johnrshannon',
     ],
+    'TODO.md': [
+      '# TODO',
+      '',
+      '- [ ] write more unit tests',
+      '- [ ] actually read that kubernetes book',
+      '- [ ] figure out what\'s consuming 40% of node-prod-02',
+      '- [ ] reply to that recruiter (maybe)',
+      '- [ ] migrate postgres to 16',
+      '- [x] set up monitoring',
+      '- [x] beat cancer',
+      '- [x] learn vim (still learning)',
+    ],
+    'reads.txt': [
+      'currently reading',
+      '  The Pragmatic Programmer — Hunt & Thomas',
+      '',
+      'finished',
+      '  Site Reliability Engineering — Google',
+      '  Designing Data-Intensive Applications — Kleppmann',
+      '  The Phoenix Project — Kim et al',
+      '  A Mind for Numbers — Oakley',
+      '  Why Buddhism is True — Wright',
+      '  Blood Meridian — McCarthy (twice)',
+    ],
+    'Makefile': [
+      '.PHONY: coffee sleep debug deploy',
+      '',
+      'coffee:',
+      '\t@echo "brewing..."',
+      '\t@echo "done. probably won\'t help."',
+      '',
+      'sleep:',
+      '\t@echo "not on call tonight. attempting sleep."',
+      '',
+      'debug:',
+      '\t@echo "have you tried turning it off and on again"',
+      '\t@exit 1',
+      '',
+      'deploy:',
+      '\t@echo "are you sure"',
+      '\t@echo "are you really sure"',
+      '\t@./scripts/deploy.sh',
+    ],
+    '.vimrc': [
+      'set nocompatible',
+      'set number',
+      'set relativenumber',
+      'set tabstop=2',
+      'set shiftwidth=2',
+      'set expandtab',
+      'set autoindent',
+      'set hlsearch',
+      'set incsearch',
+      'set ignorecase',
+      'set smartcase',
+      'syntax on',
+      'colorscheme desert',
+      '" still figuring out the rest',
+    ],
   };
+
+  const projectFiles: Record<string, string[]> = {
 
   const projectFiles: Record<string, string[]> = {
     '~/projects/sentry-gate/README.md': [
@@ -487,6 +585,148 @@ try {
       '',
       'stack    Python · curses · PagerDuty API · Datadog API',
       'status   personal use · open to sharing if you ask nicely',
+    ],
+    '~/dotfiles/.vimrc': [
+      'set nocompatible',
+      'set number',
+      'set relativenumber',
+      'set tabstop=2 shiftwidth=2 expandtab',
+      'set autoindent hlsearch incsearch ignorecase smartcase',
+      'syntax on',
+      'colorscheme desert',
+      '" still figuring out the rest',
+    ],
+    '~/dotfiles/.zshrc': [
+      '# zshrc — last updated who knows when',
+      '',
+      'export PATH="$HOME/.local/bin:$PATH"',
+      'export EDITOR=vim',
+      'export PAGER=less',
+      '',
+      'alias ll=\'ls -la\'',
+      'alias k=\'kubectl\'',
+      'alias tf=\'terraform\'',
+      'alias please=\'sudo\'',
+      '',
+      '# don\'t judge me',
+      'alias yolo=\'git push --force\'',
+    ],
+    '~/dotfiles/.gitconfig': [
+      '[user]',
+      '  name = John Shannon',
+      '  email = john.ryland.shannon@gmail.com',
+      '',
+      '[core]',
+      '  editor = vim',
+      '',
+      '[alias]',
+      '  lg = log --oneline --graph --decorate',
+      '  st = status',
+      '  please = push --force-with-lease',
+      '',
+      '[push]',
+      '  default = current',
+    ],
+    '~/scripts/deploy.sh': [
+      '#!/bin/bash',
+      'set -euo pipefail',
+      '',
+      'echo "deploying to production..."',
+      'echo "running tests..."',
+      'echo "tests passed (probably)"',
+      'echo "syncing to s3..."',
+      'echo "invalidating cloudfront..."',
+      'echo "done. fingers crossed."',
+    ],
+    '~/scripts/backup.sh': [
+      '#!/bin/bash',
+      'set -euo pipefail',
+      '',
+      'DEST="s3://backups/$(date +%Y-%m-%d)"',
+      'echo "backing up to $DEST"',
+      'aws s3 sync /data $DEST --storage-class STANDARD_IA',
+      'echo "backup complete"',
+    ],
+    '~/scripts/check-services.sh': [
+      '#!/bin/bash',
+      '# checks that the important stuff is up',
+      '',
+      'services=(nginx postgres redis)',
+      '',
+      'for svc in "${services[@]}"; do',
+      '  systemctl is-active --quiet $svc \\',
+      '    && echo "$svc: ok" \\',
+      '    || echo "$svc: DOWN — wake up"',
+      'done',
+    ],
+    '~/oncall/runbook.md': [
+      '# On-Call Runbook',
+      '',
+      '## When Everything Is On Fire',
+      '',
+      '1. breathe',
+      '2. check the dashboard',
+      '3. identify the blast radius',
+      '4. stop the bleeding first, understand why later',
+      '5. communicate early and often',
+      '6. write it up when it\'s over',
+      '',
+      '## Common Issues',
+      '',
+      '### high memory on node-prod-02',
+      '  ps aux | sort -rk 4 | head -5',
+      '  usually that java process. kill it. it comes back.',
+      '',
+      '### postgres slow queries',
+      '  check pg_stat_activity',
+      '  look for locks',
+      '  consider your life choices',
+    ],
+    '~/oncall/postmortem-2023-11.md': [
+      '# Postmortem: Database Failover — 2023-11-14',
+      '',
+      '## Summary',
+      'Primary postgres instance unreachable at 02:14 UTC.',
+      'Failover complete at 02:31. Total downtime: 17 minutes.',
+      '',
+      '## Timeline',
+      '02:14  alerts fired. john was asleep.',
+      '02:16  john was no longer asleep.',
+      '02:22  root cause identified: disk full on primary',
+      '02:31  failover complete, traffic restored',
+      '03:45  john went back to sleep',
+      '',
+      '## Root Cause',
+      'Log rotation misconfigured after last upgrade.',
+      'Disk filled up quietly over three weeks.',
+      '',
+      '## Action Items',
+      '- [x] fix log rotation',
+      '- [x] add disk usage alerts (should have had these)',
+      '- [ ] sleep more regularly',
+    ],
+    '~/oncall/postmortem-2024-03.md': [
+      '# Postmortem: Cascading Cache Failure — 2024-03-07',
+      '',
+      '## Summary',
+      'Redis eviction policy misconfigured after capacity upgrade.',
+      'Cache hit rate dropped to 4%, causing 10x load on postgres.',
+      '',
+      '## Timeline',
+      '14:32  error rate spikes detected',
+      '14:38  database CPU at 98%',
+      '14:45  cache identified as root cause',
+      '14:52  eviction policy corrected, cache warming started',
+      '15:11  error rate returned to baseline',
+      '',
+      '## Root Cause',
+      'maxmemory-policy set to noeviction after upgrade.',
+      'Should have been allkeys-lru.',
+      '',
+      '## Action Items',
+      '- [x] fix eviction policy',
+      '- [x] add cache hit rate to dashboard',
+      '- [x] document redis upgrade checklist',
     ],
   };
 
@@ -547,6 +787,7 @@ try {
     'rm -rf /':  ['<span class="line-error">absolutely not.</span>'],
     'rm -rf *':  ['<span class="line-error">absolutely not.</span>'],
     'git log': [
+      '<span class="line-muted">commit</span> <span class="line-accent">c0ff33a</span> — john.ryland.shannon@gmail.com · github.com/johnrshannon · linkedin.com/in/john-shannon-1703878b',
       '<span class="line-muted">commit</span> <span class="line-accent">a1b2c3d</span> — moved to colorado, figured it out',
       '<span class="line-muted">commit</span> <span class="line-accent">f4e5d6c</span> — beat cancer, resumed normal operations',
       '<span class="line-muted">commit</span> <span class="line-accent">7890abc</span> — switched to mechanical keyboard, no going back',
@@ -554,6 +795,7 @@ try {
       '<span class="line-muted">commit</span> <span class="line-accent">456789f</span> — initial commit: born 1987',
     ],
     'git log --oneline': [
+      '<span class="line-accent">c0ff33a</span> john.ryland.shannon@gmail.com · github.com/johnrshannon',
       '<span class="line-accent">a1b2c3d</span> moved to colorado, figured it out',
       '<span class="line-accent">f4e5d6c</span> beat cancer, resumed normal operations',
       '<span class="line-accent">7890abc</span> switched to mechanical keyboard, no going back',
@@ -771,11 +1013,13 @@ try {
   }
 
   // ── ls clickable entries ─────────────────────────────────────────
-  function makeLsLines(lines: string[]): string[] {
+  function makeLsLines(lines: string[], colors: Record<string, string> = {}): string[] {
     return lines.map(line => line.replace(/(\s{2,})(\S+\/?)$/, (_, spaces, name) => {
       const isDir = name.endsWith('/');
       const cmd = isDir ? `cd ${name.slice(0, -1)}` : `cat ${name}`;
-      return `${spaces}<span class="ls-clickable" data-cmd="${cmd}">${name}</span>`;
+      const color = colors[name] ?? (isDir ? 'var(--prompt)' : '');
+      const style = color ? ` style="color:${color}"` : '';
+      return `${spaces}<span class="ls-clickable" data-cmd="${cmd}"${style}>${name}</span>`;
     }));
   }
 
@@ -1025,7 +1269,19 @@ try {
         appendOutput(['<span class="line-error">no such directory</span>']);
       } else {
         setDir('~/projects');
-        appendOutput(makeLsLines(dirContents['~/projects']));
+        appendOutput(makeLsLines(dirContents['~/projects'], fileColors['~/projects'] ?? {}));
+      }
+      scrollBottom();
+      return;
+    }
+    const cdHomeDirMatch = lower.match(/^cd (dotfiles|scripts|oncall)\/?$/);
+    if (cdHomeDirMatch) {
+      if (currentDir !== '~') {
+        appendOutput([`<span class="line-error">cd: ${cdHomeDirMatch[1]}: No such file or directory</span>`]);
+      } else {
+        const newDir = `~/${cdHomeDirMatch[1]}`;
+        setDir(newDir);
+        appendOutput(makeLsLines(dirContents[newDir], fileColors[newDir] ?? {}));
       }
       scrollBottom();
       return;
@@ -1037,7 +1293,7 @@ try {
       } else {
         const newDir = `~/projects/${cdProjectMatch[1]}`;
         setDir(newDir);
-        appendOutput(makeLsLines(dirContents[newDir]));
+        appendOutput(makeLsLines(dirContents[newDir], fileColors[newDir] ?? {}));
       }
       scrollBottom();
       return;
@@ -1045,9 +1301,10 @@ try {
     if (lower === 'cd ..') {
       if (currentDir.startsWith('~/projects/')) {
         setDir('~/projects');
-        appendOutput(makeLsLines(dirContents['~/projects']));
-      } else {
+        appendOutput(makeLsLines(dirContents['~/projects'], fileColors['~/projects'] ?? {}));
+      } else if (currentDir !== '~') {
         setDir('~');
+        appendOutput(makeLsLines(dirContents['~'], fileColors['~'] ?? {}));
       }
       scrollBottom();
       return;
@@ -1063,7 +1320,7 @@ try {
       const contents = dirContents[currentDir] ?? [];
       const showHidden = lower.includes('-la') || lower.includes('-a');
       const filtered = showHidden ? contents : contents.filter(l => !l.includes('.secrets'));
-      appendOutput(makeLsLines(filtered));
+      appendOutput(makeLsLines(filtered, fileColors[currentDir] ?? {}));
       scrollBottom();
       return;
     }
@@ -1080,7 +1337,7 @@ try {
         appendOutput([`<span class="line-error">${catMatch[0].startsWith('cat') ? 'cat' : catMatch[0].startsWith('less') ? 'less' : 'more'}: ${filename}: No such file or directory</span>`]);
       } else {
         const isPaged = lower.startsWith('less') || lower.startsWith('more');
-        const rendered = filename === 'README.md' ? renderReadme(content) : content;
+        const rendered = filename.endsWith('.md') ? renderReadme(content) : content;
         appendOutput([...rendered, ...(isPaged ? ['', '<span class="line-muted">-- END --</span>'] : [])]);
       }
       scrollBottom();
@@ -1135,21 +1392,35 @@ try {
     if (currentDir === '~') {
       return [
         ...baseCompletions,
-        'cd projects/', 'cd ~',
-        'cat about.txt', 'cat skills.txt', 'cat contact.txt',
-        'less about.txt', 'less skills.txt', 'less contact.txt',
-        'vim about.txt', 'vim skills.txt', 'vim contact.txt',
-        'vi about.txt', 'vi skills.txt', 'vi contact.txt',
+        'cd projects', 'cd dotfiles', 'cd scripts', 'cd oncall', 'cd ~',
+        'cat about.txt', 'cat skills.txt', 'cat TODO.md', 'cat reads.txt', 'cat Makefile', 'cat .vimrc',
+        'less about.txt', 'less skills.txt', 'less reads.txt',
+        'vim about.txt', 'vim skills.txt', 'vim .vimrc',
       ];
     } else if (currentDir === '~/projects') {
       return [
         ...baseCompletions,
-        'cd sentry-gate/', 'cd pipeline-delta/', 'cd burndown/', 'cd ..', 'cd ~',
+        'cd sentry-gate', 'cd pipeline-delta', 'cd burndown', 'cd ..', 'cd ~',
       ];
     } else if (currentDir.startsWith('~/projects/')) {
       return [
         ...baseCompletions,
-        'cat README.md', 'less README.md', 'vim README.md', 'vi README.md', 'cd ..', 'cd ~',
+        'cat README.md', 'less README.md', 'vim README.md', 'cd ..', 'cd ~',
+      ];
+    } else if (currentDir === '~/dotfiles') {
+      return [
+        ...baseCompletions,
+        'cat .vimrc', 'cat .zshrc', 'cat .gitconfig', 'cd ..', 'cd ~',
+      ];
+    } else if (currentDir === '~/scripts') {
+      return [
+        ...baseCompletions,
+        'cat deploy.sh', 'cat backup.sh', 'cat check-services.sh', 'cd ..', 'cd ~',
+      ];
+    } else if (currentDir === '~/oncall') {
+      return [
+        ...baseCompletions,
+        'cat runbook.md', 'cat postmortem-2023-11.md', 'cat postmortem-2024-03.md', 'cd ..', 'cd ~',
       ];
     }
     return baseCompletions;
@@ -1234,7 +1505,6 @@ try {
       { text: '', cls: '', delay: 60 },
       { text: `Last login: ${new Date().toDateString()}`, cls: 'line-muted', delay: 30 },
       { text: '', cls: '', delay: 30 },
-      { text: "Hey. I'm John.", cls: '', delay: 100 },
       { text: "Type a command, or click a suggestion below.", cls: 'line-muted', delay: 30 },
       { text: '', cls: '', delay: 30 },
     ];
@@ -1247,6 +1517,9 @@ try {
       await typewriter(line.text, div, line.text.startsWith(PROMPT_STR) ? 12 : 16);
       scrollBottom();
     }
+
+    appendOutput(makeLsLines(dirContents['~'], fileColors['~'] ?? {}));
+    scrollBottom();
 
     inputRow.style.display = 'flex';
     cmdInput.focus();
