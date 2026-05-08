@@ -1042,7 +1042,7 @@ try {
     // cat / less / more
     const catMatch = lower.match(/^(?:cat|less|more)\s+(.+)$/);
     if (catMatch) {
-      const filename = catMatch[1].trim();
+      const filename = cmd.slice(cmd.indexOf(' ') + 1).trim();
       const fullPath = `${currentDir}/${filename}`;
       const content = projectFiles[fullPath] ?? files[filename];
       if (filename === '.secrets') {
@@ -1087,15 +1087,9 @@ try {
   const history: string[] = [];
   let historyIndex = -1;
 
-  const completions = [
+  const baseCompletions = [
     'whoami', 'help', 'clear', 'history', 'pwd', 'date',
     'ls', 'ls -la',
-    'cd projects/', 'cd ..', 'cd ~',
-    'cat about.txt', 'cat skills.txt', 'cat contact.txt',
-    'less about.txt', 'less skills.txt', 'less contact.txt',
-    'more about.txt', 'more skills.txt', 'more contact.txt',
-    'vim about.txt', 'vim skills.txt', 'vim contact.txt',
-    'vi about.txt', 'vi skills.txt', 'vi contact.txt',
     'git log', 'git log --oneline',
     'hostname', 'uname -a', 'uptime', 'env', 'ps aux', 'df -h', 'free -h',
     'kubectl', 'kubectl get pods', 'kubectl get nodes', 'kubectl get deployments',
@@ -1106,6 +1100,30 @@ try {
     'echo hello', 'apt install vim',
     'sudo', 'nano', 'brew', 'exit',
   ];
+
+  function getCompletions(): string[] {
+    if (currentDir === '~') {
+      return [
+        ...baseCompletions,
+        'cd projects/', 'cd ~',
+        'cat about.txt', 'cat skills.txt', 'cat contact.txt',
+        'less about.txt', 'less skills.txt', 'less contact.txt',
+        'vim about.txt', 'vim skills.txt', 'vim contact.txt',
+        'vi about.txt', 'vi skills.txt', 'vi contact.txt',
+      ];
+    } else if (currentDir === '~/projects') {
+      return [
+        ...baseCompletions,
+        'cd sentry-gate/', 'cd pipeline-delta/', 'cd burndown/', 'cd ..', 'cd ~',
+      ];
+    } else if (currentDir.startsWith('~/projects/')) {
+      return [
+        ...baseCompletions,
+        'cat README.md', 'less README.md', 'vim README.md', 'vi README.md', 'cd ..', 'cd ~',
+      ];
+    }
+    return baseCompletions;
+  }
 
   document.addEventListener('keydown', (e) => {
     if (vimOverlay.classList.contains('active')) {
@@ -1120,7 +1138,7 @@ try {
       e.preventDefault();
       const val = cmdInput.value.toLowerCase();
       if (!val) return;
-      const match = completions.find(c => c.startsWith(val) && c !== val);
+      const match = getCompletions().find(c => c.startsWith(val) && c !== val);
       if (match) cmdInput.value = match;
     } else if (e.key === 'Enter') {
       const val = cmdInput.value;
