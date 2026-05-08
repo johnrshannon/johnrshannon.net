@@ -62,7 +62,7 @@ try {
         <button data-cmd="man john">man john</button>
         <button data-cmd="ls">ls</button>
         <button data-cmd="cat skills.txt">cat skills.txt</button>
-        <button data-cmd="cat contact.txt">cat contact.txt</button>
+        <button data-cmd="git log">git log</button>
         <button data-cmd="help">help</button>
       </div>
       <div class="build-info" id="buildFooter"></div>
@@ -1085,6 +1085,15 @@ try {
       await typewriter(line.text, div, line.text.startsWith(PROMPT_STR) ? 12 : 16);
       scrollBottom();
     }
+
+    const contactDiv = document.createElement('div');
+    contactDiv.innerHTML = '<span class="line-muted">reach me:</span>  <span class="line-accent">john.ryland.shannon@gmail.com</span>  ·  <span class="line-accent">github.com/johnrshannon</span>  ·  <span class="line-accent">linkedin.com/in/john-shannon-1703878b</span>';
+    outputEl.appendChild(contactDiv);
+    scrollBottom();
+
+    await new Promise(r => setTimeout(r, 30));
+    const emptyDiv = document.createElement('div');
+    outputEl.appendChild(emptyDiv);
 
     inputRow.style.display = 'flex';
     cmdInput.focus();
