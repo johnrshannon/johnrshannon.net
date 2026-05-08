@@ -20,12 +20,12 @@
             <span class="dot dot-min"></span>
             <span class="dot dot-max"></span>
           </div>
-          <span class="titlebar-label">john@shannon: ~</span>
+          <span class="titlebar-label" id="titlebarLabel">john@shannon: ~</span>
         </div>
         <div class="terminal" id="terminal">
           <div id="output"></div>
           <div class="input-row" id="inputRow">
-            <span class="prompt">john@shannon ~ %&nbsp;</span>
+            <span class="prompt" id="prompt">john@shannon ~ %&nbsp;</span>
             <input
               type="text"
               id="cmdInput"
@@ -34,15 +34,23 @@
               autocapitalize="none"
               spellcheck="false"
             />
-            <span class="cursor" id="cursor"></span>
           </div>
+        </div>
+        <!-- Vim overlay -->
+        <div id="vimOverlay" class="vim-overlay">
+          <div id="vimContent" class="vim-content"></div>
+          <div class="vim-statusbar">
+            <span id="vimFilename"></span>
+            <span id="vimModeLabel">-- NORMAL --</span>
+          </div>
+          <div id="vimCmdLine" class="vim-cmdline"></div>
         </div>
       </div>
       <div class="suggestions" id="suggestions">
         <span class="suggestions-label">try →</span>
         <button data-cmd="whoami">whoami</button>
         <button data-cmd="cat about.txt">cat about.txt</button>
-        <button data-cmd="ls projects/">ls projects/</button>
+        <button data-cmd="ls">ls</button>
         <button data-cmd="cat skills.txt">cat skills.txt</button>
         <button data-cmd="cat contact.txt">cat contact.txt</button>
         <button data-cmd="help">help</button>
@@ -97,6 +105,7 @@
     border: 1px solid var(--border);
     border-radius: 12px;
     overflow: hidden;
+    position: relative;
     box-shadow:
       0 0 0 1px rgba(255,255,255,0.03),
       0 32px 80px rgba(0,0,0,0.6),
@@ -112,19 +121,12 @@
     gap: 0.75rem;
     border-bottom: 1px solid var(--border);
     user-select: none;
+    position: relative;
+    z-index: 2;
   }
 
-  .dots {
-    display: flex;
-    gap: 6px;
-  }
-
-  .dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-  }
-
+  .dots { display: flex; gap: 6px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
   .dot-close  { background: #ff5f57; }
   .dot-min    { background: #febc2e; }
   .dot-max    { background: #28c840; }
@@ -134,7 +136,7 @@
     color: var(--muted);
     flex: 1;
     text-align: center;
-    margin-right: 54px; /* offset the dots */
+    margin-right: 54px;
   }
 
   /* Terminal body */
@@ -150,20 +152,10 @@
     scroll-behavior: smooth;
   }
 
-  .terminal::-webkit-scrollbar {
-    width: 4px;
-  }
+  .terminal::-webkit-scrollbar { width: 4px; }
+  .terminal::-webkit-scrollbar-track { background: transparent; }
+  .terminal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  .terminal::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .terminal::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 2px;
-  }
-
-  /* Output lines */
   #output {
     white-space: pre-wrap;
     word-break: break-word;
@@ -175,34 +167,13 @@
     margin-top: 0.25rem;
   }
 
-  .line-prompt {
-    color: var(--prompt);
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
+  .line-prompt { color: var(--prompt); white-space: nowrap; flex-shrink: 0; }
+  .line-cmd-text { color: var(--accent); }
+  .line-output { color: var(--text); margin-bottom: 1rem; }
+  .line-muted { color: var(--muted); }
+  .line-accent { color: var(--accent); }
+  .line-error { color: var(--error); }
 
-  .line-cmd-text {
-    color: var(--accent);
-  }
-
-  .line-output {
-    color: var(--text);
-    margin-bottom: 1rem;
-  }
-
-  .line-muted {
-    color: var(--muted);
-  }
-
-  .line-accent {
-    color: var(--accent);
-  }
-
-  .line-error {
-    color: var(--error);
-  }
-
-  /* Input row */
   .input-row {
     display: flex;
     align-items: center;
@@ -225,6 +196,76 @@
     flex: 1;
     caret-color: var(--accent);
     width: 100%;
+  }
+
+  /* Vim overlay */
+  .vim-overlay {
+    display: none;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--win-bg);
+    flex-direction: column;
+    font-size: 0.875rem;
+    font-family: var(--font);
+    z-index: 10;
+  }
+
+  .vim-overlay.active {
+    display: flex;
+  }
+
+  .vim-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.25rem 0;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  .vim-content::-webkit-scrollbar { width: 4px; }
+  .vim-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .vim-line {
+    display: flex;
+    gap: 1rem;
+    padding: 0 1rem;
+  }
+
+  .vim-linenum {
+    color: var(--muted);
+    min-width: 2.5rem;
+    text-align: right;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .vim-linetext { flex: 1; }
+
+  .vim-tilde {
+    padding: 0 1rem;
+    color: var(--muted);
+  }
+
+  .vim-statusbar {
+    background: var(--accent);
+    color: #080d14;
+    padding: 0.15rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .vim-cmdline {
+    padding: 0.15rem 1rem;
+    color: var(--text);
+    font-size: 0.875rem;
+    min-height: 1.6rem;
+    flex-shrink: 0;
   }
 
   /* Suggestions */
@@ -263,36 +304,52 @@
   }
 
   @media (max-width: 600px) {
-    .terminal {
-      font-size: 0.8rem;
-      padding: 1rem;
-      max-height: 55vh;
-    }
-
-    .titlebar-label {
-      font-size: 0.7rem;
-    }
+    .terminal { font-size: 0.8rem; padding: 1rem; max-height: 55vh; }
+    .titlebar-label { font-size: 0.7rem; }
   }
 </style>
 
 <script>
-  const output = document.getElementById('output')!;
-  const inputRow = document.getElementById('inputRow')!;
-  const cmdInput = document.getElementById('cmdInput') as HTMLInputElement;
-  const terminal = document.getElementById('terminal')!;
+  const outputEl   = document.getElementById('output')!;
+  const inputRow   = document.getElementById('inputRow')!;
+  const cmdInput   = document.getElementById('cmdInput') as HTMLInputElement;
+  const terminal   = document.getElementById('terminal')!;
+  const promptEl   = document.getElementById('prompt')!;
+  const titleLabel = document.getElementById('titlebarLabel')!;
+  const vimOverlay = document.getElementById('vimOverlay')!;
+  const vimContent = document.getElementById('vimContent')!;
+  const vimFilename  = document.getElementById('vimFilename')!;
+  const vimModeLabel = document.getElementById('vimModeLabel')!;
+  const vimCmdLine   = document.getElementById('vimCmdLine')!;
 
-  const PROMPT = 'john@shannon ~ %';
+  // ── Directory state ──────────────────────────────────────────────
+  let currentDir = '~';
 
-  const commands: Record<string, string[]> = {
-    whoami: [
-      '<span class="line-accent">john shannon</span>',
-      '<span class="line-muted">software engineer · colorado</span>',
-      '',
-      'data infrastructure, kubernetes, ci/cd, cloud.',
-      'the stuff that makes everything else not fall over.',
+  function setDir(dir: string) {
+    currentDir = dir;
+    const label = `john@shannon ${dir} %\u00a0`;
+    promptEl.textContent = label;
+    titleLabel.textContent = `john@shannon: ${dir}`;
+  }
+
+  const dirContents: Record<string, string[]> = {
+    '~': [
+      '<span class="line-accent">drwxr-xr-x</span>  projects/',
+      '<span class="line-muted">-rw-r--r--</span>  about.txt',
+      '<span class="line-muted">-rw-r--r--</span>  skills.txt',
+      '<span class="line-muted">-rw-r--r--</span>  contact.txt',
+      '<span class="line-muted">-rw-------</span>  .secrets',
     ],
+    '~/projects': [
+      '<span class="line-accent">drwxr-xr-x</span>  project-one/',
+      '<span class="line-accent">drwxr-xr-x</span>  project-two/',
+      '<span class="line-accent">drwxr-xr-x</span>  project-three/',
+    ],
+  };
 
-    'cat about.txt': [
+  // ── File contents (shared by cat / less / more / vim) ────────────
+  const files: Record<string, string[]> = {
+    'about.txt': [
       'Born 1987. Colorado since 2014.',
       '',
       'Senior Site Reliability Engineer. I keep software alive',
@@ -302,56 +359,60 @@
       'I play guitar, cook experimentally, and floss religiously.',
       'Math nerd. Cancer survivor.',
     ],
+    'skills.txt': [
+      'languages    Python · Bash · SQL · TypeScript',
+      'cloud        AWS · Terraform · Ansible',
+      'containers   Docker · Kubernetes · Helm',
+      'data         PostgreSQL · dbt · Spark',
+      'ci/cd        GitHub Actions · ArgoCD · Jenkins',
+      'os           Linux (obviously)',
+    ],
+    'contact.txt': [
+      'email   john.ryland.shannon@gmail.com',
+      'github  github.com/johnrshannon',
+    ],
+  };
 
+  // ── Commands ─────────────────────────────────────────────────────
+  const staticCmds: Record<string, string[]> = {
+    whoami: [
+      '<span class="line-accent">john shannon</span>',
+      '<span class="line-muted">sr. site reliability engineer · colorado</span>',
+      '',
+      'infrastructure, observability, incident response.',
+      'the part of the stack that has to actually work.',
+    ],
+    help: [
+      '<span class="line-muted">available commands:</span>',
+      '',
+      '  whoami              who is this guy',
+      '  cat &lt;file&gt;          read a file',
+      '  less &lt;file&gt;         read a file, paginated',
+      '  more &lt;file&gt;         same as less',
+      '  vi &lt;file&gt;           open a file in vim',
+      '  vim &lt;file&gt;          same as vi',
+      '  ls                  list current directory',
+      '  ls -la              list with hidden files',
+      '  cd &lt;dir&gt;            change directory',
+      '  cd ..               go up',
+      '  clear               clean slate',
+      '',
+      '<span class="line-muted">// or click the suggestions below</span>',
+    ],
     'ls projects/': [
-      '<span class="line-muted">total 3</span>',
       '<span class="line-accent">drwxr-xr-x</span>  project-one/',
       '<span class="line-accent">drwxr-xr-x</span>  project-two/',
       '<span class="line-accent">drwxr-xr-x</span>  project-three/',
       '',
       '<span class="line-muted">// real projects coming soon</span>',
     ],
-
-    'cat skills.txt': [
-      '<span class="line-muted">languages    </span>  Python · Bash · SQL · TypeScript',
-      '<span class="line-muted">cloud        </span>  AWS · Terraform · Ansible',
-      '<span class="line-muted">containers   </span>  Docker · Kubernetes · Helm',
-      '<span class="line-muted">data         </span>  PostgreSQL · dbt · Spark',
-      '<span class="line-muted">ci/cd        </span>  GitHub Actions · ArgoCD · Jenkins',
-      '<span class="line-muted">os           </span>  Linux (obviously)',
-    ],
-
-    'cat contact.txt': [
-      '<span class="line-muted">email   </span>  john.ryland.shannon@gmail.com',
-      '<span class="line-muted">github  </span>  <a href="https://github.com/johnrshannon" target="_blank" style="color:var(--accent);text-decoration:none">github.com/johnrshannon ↗</a>',
-    ],
-
-    help: [
-      '<span class="line-muted">available commands:</span>',
-      '',
-      '  whoami           who is this guy',
-      '  cat about.txt    the longer version',
-      '  ls projects/     things i\'ve built',
-      '  cat skills.txt   technologies i actually use',
-      '  cat contact.txt  get in touch',
-      '  clear            clean slate',
-      '',
-      '<span class="line-muted">// or just click the suggestions below</span>',
-    ],
-
-    clear: [],
-
     // easter eggs
     sudo: [
       '<span class="line-error">permission denied.</span>',
       '<span class="line-muted">nice try.</span>',
     ],
-    'rm -rf /': [
-      '<span class="line-error">absolutely not.</span>',
-    ],
-    'rm -rf *': [
-      '<span class="line-error">absolutely not.</span>',
-    ],
+    'rm -rf /':  ['<span class="line-error">absolutely not.</span>'],
+    'rm -rf *':  ['<span class="line-error">absolutely not.</span>'],
     'git log': [
       '<span class="line-muted">commit</span> <span class="line-accent">a1b2c3d</span> — moved to colorado, figured it out',
       '<span class="line-muted">commit</span> <span class="line-accent">f4e5d6c</span> — beat cancer, resumed normal operations',
@@ -366,103 +427,259 @@
       '<span class="line-accent">def0123</span> learned kubernetes the hard way',
       '<span class="line-accent">456789f</span> initial commit: born 1987',
     ],
-    'ls -la': [
-      '<span class="line-muted">drwxr-xr-x</span>  about.txt',
-      '<span class="line-muted">drwxr-xr-x</span>  skills.txt',
-      '<span class="line-muted">drwxr-xr-x</span>  contact.txt',
-      '<span class="line-muted">drwxr-xr-x</span>  projects/',
-      '<span class="line-muted">-rw-------</span>  .secrets  <span class="line-muted">(nice try)</span>',
+    'cat .secrets': [
+      '<span class="line-error">permission denied.</span>',
+    ],
+    'vim .secrets': [
+      '<span class="line-error">permission denied.</span>',
+    ],
+    'vi .secrets': [
+      '<span class="line-error">permission denied.</span>',
     ],
   };
 
-  function appendLine(html: string, className = '') {
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    if (className) div.className = className;
-    output.appendChild(div);
+  // ── Output helpers ───────────────────────────────────────────────
+  function appendLine(html: string, cls = '') {
+    const d = document.createElement('div');
+    d.innerHTML = html;
+    if (cls) d.className = cls;
+    outputEl.appendChild(d);
   }
 
   function appendCommandLine(cmd: string) {
-    const div = document.createElement('div');
-    div.className = 'line-cmd';
-    div.innerHTML = `<span class="line-prompt">${PROMPT} %</span><span class="line-cmd-text">${cmd}</span>`;
-    output.appendChild(div);
+    const d = document.createElement('div');
+    d.className = 'line-cmd';
+    d.innerHTML = `<span class="line-prompt">${currentDir === '~' ? 'john@shannon ~ %' : 'john@shannon ~/projects %'}</span><span class="line-cmd-text">&nbsp;${cmd}</span>`;
+    outputEl.appendChild(d);
   }
 
-  function scrollToBottom() {
+  function appendOutput(lines: string[]) {
+    const block = document.createElement('div');
+    block.className = 'line-output';
+    block.innerHTML = lines.join('\n');
+    outputEl.appendChild(block);
+  }
+
+  function scrollBottom() {
     terminal.scrollTop = terminal.scrollHeight;
   }
 
-  function runCommand(cmd: string) {
-    const trimmed = cmd.trim().toLowerCase();
+  // ── Vim ──────────────────────────────────────────────────────────
+  let vimMode = 'normal';
+  let vimCmdBuffer = '';
+  let vimCurrentFile = '';
 
-    appendCommandLine(cmd.trim());
-
-    if (trimmed === 'clear') {
-      output.innerHTML = '';
-      scrollToBottom();
+  function openVim(filename: string) {
+    const content = files[filename];
+    if (!content) {
+      appendOutput([`<span class="line-error">vim: ${filename}: No such file or directory</span>`]);
       return;
     }
 
-    const result = commands[trimmed];
+    vimCurrentFile = filename;
+    vimMode = 'normal';
+    vimCmdBuffer = '';
 
-    if (result === undefined) {
-      appendLine(
-        `<span class="line-error">command not found: ${cmd.trim()}</span><br><span class="line-muted">type 'help' to see what's available</span>`,
-        'line-output'
-      );
-    } else {
-      const block = document.createElement('div');
-      block.className = 'line-output';
-      block.innerHTML = result.join('\n');
-      output.appendChild(block);
+    // Render lines with numbers
+    vimContent.innerHTML = '';
+    content.forEach((line, i) => {
+      const row = document.createElement('div');
+      row.className = 'vim-line';
+      row.innerHTML = `<span class="vim-linenum">${i + 1}</span><span class="vim-linetext">${line || ' '}</span>`;
+      vimContent.appendChild(row);
+    });
+    // Tilde lines to fill space
+    for (let i = 0; i < 8; i++) {
+      const t = document.createElement('div');
+      t.className = 'vim-tilde';
+      t.textContent = '~';
+      vimContent.appendChild(t);
     }
 
-    scrollToBottom();
-  }
-
-  // Typewriter intro
-  async function typewriter(text: string, el: HTMLElement, speed = 30): Promise<void> {
-    for (const char of text) {
-      el.textContent += char;
-      await new Promise(r => setTimeout(r, speed));
-    }
-  }
-
-  async function intro() {
-    inputRow.style.display = 'none';
-
-    const lines = [
-      { text: `${PROMPT} % ssh john@shannon.net`, cls: 'line-accent', delay: 0 },
-      { text: 'Connected.', cls: 'line-muted', delay: 400 },
-      { text: '', cls: '', delay: 200 },
-      { text: `Last login: ${new Date().toDateString()}`, cls: 'line-muted', delay: 100 },
-      { text: '', cls: '', delay: 100 },
-      { text: "Hey. I'm John.", cls: '', delay: 300 },
-      { text: "Type a command below, or click a suggestion.", cls: 'line-muted', delay: 100 },
-      { text: '', cls: '', delay: 200 },
-    ];
-
-    for (const line of lines) {
-      await new Promise(r => setTimeout(r, line.delay));
-      const div = document.createElement('div');
-      div.className = line.cls;
-      output.appendChild(div);
-      await typewriter(line.text, div, line.text.startsWith(PROMPT) ? 18 : 25);
-      scrollToBottom();
-    }
-
-    inputRow.style.display = 'flex';
+    vimFilename.textContent = `"${filename}" ${content.length}L`;
+    vimModeLabel.textContent = '-- NORMAL --';
+    vimCmdLine.textContent = '';
+    vimOverlay.classList.add('active');
     cmdInput.focus();
   }
 
-  // Input handling
+  function closeVim() {
+    vimOverlay.classList.remove('active');
+    vimMode = 'normal';
+    vimCmdBuffer = '';
+    vimCmdLine.textContent = '';
+    cmdInput.focus();
+  }
+
+  function handleVimKey(e: KeyboardEvent) {
+    e.preventDefault();
+
+    if (vimMode === 'normal') {
+      if (e.key === 'i') {
+        vimMode = 'insert';
+        vimModeLabel.textContent = '-- INSERT --';
+        vimCmdLine.textContent = '';
+      } else if (e.key === ':') {
+        vimMode = 'command';
+        vimCmdBuffer = ':';
+        vimCmdLine.textContent = ':';
+      } else if (e.key === 'Escape') {
+        vimCmdLine.textContent = '';
+      }
+    } else if (vimMode === 'insert') {
+      if (e.key === 'Escape') {
+        vimMode = 'normal';
+        vimModeLabel.textContent = '-- NORMAL --';
+        vimCmdLine.textContent = '';
+      }
+    } else if (vimMode === 'command') {
+      if (e.key === 'Escape') {
+        vimMode = 'normal';
+        vimCmdBuffer = '';
+        vimCmdLine.textContent = '';
+      } else if (e.key === 'Enter') {
+        const cmd = vimCmdBuffer.slice(1).trim();
+        if (cmd === 'q' || cmd === 'q!' || cmd === 'wq!') {
+          closeVim();
+        } else if (cmd === 'wq' || cmd === 'w') {
+          vimCmdLine.textContent = `E45: 'readonly' option is set (add ! to override)`;
+          vimMode = 'normal';
+          vimCmdBuffer = '';
+        } else {
+          vimCmdLine.textContent = `E492: Not an editor command: ${cmd}`;
+          vimMode = 'normal';
+          vimCmdBuffer = '';
+        }
+      } else if (e.key === 'Backspace') {
+        if (vimCmdBuffer.length > 1) {
+          vimCmdBuffer = vimCmdBuffer.slice(0, -1);
+          vimCmdLine.textContent = vimCmdBuffer;
+        } else {
+          vimMode = 'normal';
+          vimCmdBuffer = '';
+          vimCmdLine.textContent = '';
+        }
+      } else if (e.key.length === 1) {
+        vimCmdBuffer += e.key;
+        vimCmdLine.textContent = vimCmdBuffer;
+      }
+    }
+  }
+
+  // ── Command runner ───────────────────────────────────────────────
+  function runCommand(raw: string) {
+    const cmd = raw.trim();
+    const lower = cmd.toLowerCase();
+
+    appendCommandLine(cmd);
+
+    // clear
+    if (lower === 'clear') {
+      outputEl.innerHTML = '';
+      scrollBottom();
+      return;
+    }
+
+    // cd
+    if (lower === 'cd' || lower === 'cd ~') {
+      setDir('~');
+      scrollBottom();
+      return;
+    }
+    if (lower === 'cd projects/' || lower === 'cd projects') {
+      if (currentDir !== '~') {
+        appendOutput(['<span class="line-error">no such directory</span>']);
+      } else {
+        setDir('~/projects');
+      }
+      scrollBottom();
+      return;
+    }
+    if (lower === 'cd ..') {
+      setDir('~');
+      scrollBottom();
+      return;
+    }
+    if (lower.startsWith('cd ')) {
+      appendOutput([`<span class="line-error">cd: ${cmd.slice(3)}: No such file or directory</span>`]);
+      scrollBottom();
+      return;
+    }
+
+    // ls
+    if (lower === 'ls' || lower === 'ls -la' || lower === 'ls -l') {
+      const contents = dirContents[currentDir] ?? [];
+      const showHidden = lower.includes('-la') || lower.includes('-a');
+      appendOutput(showHidden ? contents : contents.filter(l => !l.includes('.secrets')));
+      scrollBottom();
+      return;
+    }
+
+    // cat / less / more
+    const catMatch = lower.match(/^(?:cat|less|more)\s+(.+)$/);
+    if (catMatch) {
+      const filename = catMatch[1].trim();
+      const content = files[filename];
+      if (filename === '.secrets') {
+        appendOutput(['<span class="line-error">permission denied.</span>']);
+      } else if (!content) {
+        appendOutput([`<span class="line-error">${catMatch[0].startsWith('cat') ? 'cat' : catMatch[0].startsWith('less') ? 'less' : 'more'}: ${filename}: No such file or directory</span>`]);
+      } else {
+        const isPaged = lower.startsWith('less') || lower.startsWith('more');
+        appendOutput([...content, ...(isPaged ? ['', '<span class="line-muted">-- END --</span>'] : [])]);
+      }
+      scrollBottom();
+      return;
+    }
+
+    // vi / vim
+    const vimMatch = lower.match(/^(?:vi|vim)\s+(.+)$/);
+    if (vimMatch) {
+      const filename = vimMatch[1].trim();
+      if (staticCmds[`vim ${filename}`]) {
+        appendOutput(staticCmds[`vim ${filename}`]);
+      } else {
+        openVim(filename);
+      }
+      scrollBottom();
+      return;
+    }
+
+    // static commands
+    const result = staticCmds[lower];
+    if (result !== undefined) {
+      appendOutput(result);
+      scrollBottom();
+      return;
+    }
+
+    // not found
+    appendOutput([`<span class="line-error">command not found: ${cmd}</span><br><span class="line-muted">type 'help' to see what's available</span>`]);
+    scrollBottom();
+  }
+
+  // ── Input handling ───────────────────────────────────────────────
   const history: string[] = [];
   let historyIndex = -1;
 
-  const completions = Object.keys(commands).filter(k => !['clear','sudo','rm -rf /','rm -rf *'].includes(k));
+  const completions = [
+    'whoami', 'help', 'clear',
+    'ls', 'ls -la',
+    'cd projects/', 'cd ..', 'cd ~',
+    'cat about.txt', 'cat skills.txt', 'cat contact.txt',
+    'less about.txt', 'less skills.txt', 'less contact.txt',
+    'more about.txt', 'more skills.txt', 'more contact.txt',
+    'vim about.txt', 'vim skills.txt', 'vim contact.txt',
+    'vi about.txt', 'vi skills.txt', 'vi contact.txt',
+    'git log', 'git log --oneline',
+  ];
 
   cmdInput.addEventListener('keydown', (e) => {
+    if (vimOverlay.classList.contains('active')) {
+      handleVimKey(e);
+      return;
+    }
+
     if (e.key === 'Tab') {
       e.preventDefault();
       const val = cmdInput.value.toLowerCase();
@@ -504,8 +721,43 @@
     });
   });
 
-  // Click anywhere in terminal to focus input
   terminal.addEventListener('click', () => cmdInput.focus());
+
+  // ── Typewriter intro ─────────────────────────────────────────────
+  async function typewriter(text: string, el: HTMLElement, speed = 30): Promise<void> {
+    for (const char of text) {
+      el.textContent += char;
+      await new Promise(r => setTimeout(r, speed));
+    }
+  }
+
+  async function intro() {
+    inputRow.style.display = 'none';
+
+    const PROMPT_STR = 'john@shannon ~ %';
+    const lines = [
+      { text: `${PROMPT_STR} % ssh john@shannon.net`, cls: 'line-accent', delay: 0 },
+      { text: 'Connected.', cls: 'line-muted', delay: 400 },
+      { text: '', cls: '', delay: 200 },
+      { text: `Last login: ${new Date().toDateString()}`, cls: 'line-muted', delay: 100 },
+      { text: '', cls: '', delay: 100 },
+      { text: "Hey. I'm John.", cls: '', delay: 300 },
+      { text: "Type a command, or click a suggestion below.", cls: 'line-muted', delay: 100 },
+      { text: '', cls: '', delay: 200 },
+    ];
+
+    for (const line of lines) {
+      await new Promise(r => setTimeout(r, line.delay));
+      const div = document.createElement('div');
+      div.className = line.cls;
+      outputEl.appendChild(div);
+      await typewriter(line.text, div, line.text.startsWith(PROMPT_STR) ? 18 : 25);
+      scrollBottom();
+    }
+
+    inputRow.style.display = 'flex';
+    cmdInput.focus();
+  }
 
   intro();
 </script>
