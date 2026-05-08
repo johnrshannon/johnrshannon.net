@@ -64,7 +64,7 @@ try {
           <div id="vimCmdLine" class="vim-cmdline"></div>
         </div>
       </div>
-      <button id="homeBtn" class="home-btn" style="display:none">⌂ home</button>
+      <button id="homeBtn" class="home-btn">⌂ home</button>
       <div class="suggestions" id="suggestions">
         <span class="suggestions-label">try →</span>
         <button data-cmd="whoami">whoami</button>
@@ -324,20 +324,20 @@ try {
   /* Home button */
   .home-btn {
     font-family: var(--font);
-    font-size: 0.75rem;
-    font-weight: 500;
-    padding: 0.3rem 0.75rem;
-    background: transparent;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.45rem 1.1rem;
+    background: rgba(74, 158, 255, 0.07);
     border: 1px solid var(--prompt);
     border-radius: 6px;
     color: var(--prompt);
     cursor: pointer;
-    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    transition: background 0.15s;
     align-self: center;
   }
 
   .home-btn:hover {
-    background: rgba(74, 158, 255, 0.08);
+    background: rgba(74, 158, 255, 0.18);
   }
 
   /* Suggestions */
@@ -418,10 +418,10 @@ try {
     const label = `john@shannon ${dir} %\u00a0`;
     promptEl.textContent = label;
     titleLabel.textContent = `john@shannon: ${dir}`;
-    homeBtn.style.display = dir === '~' ? 'none' : 'inline-block';
   }
 
   homeBtn.addEventListener('click', () => {
+    outputEl.innerHTML = '';
     setDir('~');
     appendOutput(makeLsLines(dirContents['~'], fileStyles['~'] ?? {}));
     scrollBottom();
@@ -468,22 +468,26 @@ try {
 
   const fileStyles: Record<string, Record<string, string>> = {
     '~': {
-      'projects/':  'color:var(--prompt);font-weight:700;font-size:1.08em',
-      'dotfiles/':  'color:var(--prompt)',
-      'scripts/':   'color:var(--prompt)',
-      'oncall/':    'color:var(--prompt)',
+      'projects/':  'color:var(--accent);font-weight:700;font-size:1.08em',
+      'dotfiles/':  'color:var(--prompt);font-size:1em',
+      'scripts/':   'color:var(--prompt);font-size:1em',
+      'oncall/':    'color:var(--prompt);font-size:1em',
       'skills.txt': 'color:var(--accent);font-weight:700;font-size:1.08em',
-      '.secrets':   'color:var(--error)',
+      'TODO.md':    'font-size:1em',
+      'reads.txt':  'font-size:1em',
+      'Makefile':   'font-size:1em',
+      '.vimrc':     'font-size:1em',
+      '.secrets':   'color:var(--error);font-size:1em',
     },
     '~/projects': {
-      'sentry-gate/':    'color:var(--prompt)',
-      'pipeline-delta/': 'color:var(--prompt)',
-      'burndown/':       'color:var(--prompt)',
+      'sentry-gate/':    'color:var(--prompt);font-size:1em',
+      'pipeline-delta/': 'color:var(--prompt);font-size:1em',
+      'burndown/':       'color:var(--prompt);font-size:1em',
     },
     '~/scripts': {
-      'deploy.sh':         'color:var(--accent)',
-      'backup.sh':         'color:var(--accent)',
-      'check-services.sh': 'color:var(--accent)',
+      'deploy.sh':         'color:var(--accent);font-size:1em',
+      'backup.sh':         'color:var(--accent);font-size:1em',
+      'check-services.sh': 'color:var(--accent);font-size:1em',
     },
   };
 
