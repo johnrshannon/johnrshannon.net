@@ -230,7 +230,7 @@
 
   .vim-line {
     display: flex;
-    gap: 1rem;
+    gap: 2rem;
     padding: 0 1rem;
   }
 
@@ -674,11 +674,14 @@
     'git log', 'git log --oneline',
   ];
 
-  cmdInput.addEventListener('keydown', (e) => {
+  document.addEventListener('keydown', (e) => {
     if (vimOverlay.classList.contains('active')) {
       handleVimKey(e);
-      return;
     }
+  });
+
+  cmdInput.addEventListener('keydown', (e) => {
+    if (vimOverlay.classList.contains('active')) return;
 
     if (e.key === 'Tab') {
       e.preventDefault();
