@@ -318,7 +318,7 @@ try {
   }
 </style>
 
-<script>
+<script define:vars={{ commitHash, commitTime }}>
   const outputEl   = document.getElementById('output')!;
   const inputRow   = document.getElementById('inputRow')!;
   const cmdInput   = document.getElementById('cmdInput') as HTMLInputElement;
