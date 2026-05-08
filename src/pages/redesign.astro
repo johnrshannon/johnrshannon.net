@@ -59,7 +59,7 @@ try {
       <div class="suggestions" id="suggestions">
         <span class="suggestions-label">try →</span>
         <button data-cmd="whoami">whoami</button>
-        <button data-cmd="cat about.txt">cat about.txt</button>
+        <button data-cmd="man john">man john</button>
         <button data-cmd="ls">ls</button>
         <button data-cmd="cat skills.txt">cat skills.txt</button>
         <button data-cmd="cat contact.txt">cat contact.txt</button>
@@ -404,9 +404,7 @@ try {
     whoami: [
       '<span class="line-accent">john shannon</span>',
       '<span class="line-muted">sr. site reliability engineer · colorado</span>',
-      '',
-      'infrastructure, observability, incident response.',
-      'the part of the stack that has to actually work.',
+      'infrastructure, observability, reliability. incident response and recoverability.',
     ],
     help: [
       '<span class="line-muted">available commands:</span>',
@@ -422,6 +420,24 @@ try {
       '  cd &lt;dir&gt;            change directory',
       '  cd ..               go up',
       '  clear               clean slate',
+      '  history             command history',
+      '  pwd                 current directory path',
+      '  date                current date and time',
+      '  echo &lt;text&gt;         print text',
+      '  which &lt;cmd&gt;         locate a command',
+      '  ping &lt;host&gt;         ping a host',
+      '  curl &lt;url&gt;          fetch a url',
+      '  man &lt;cmd&gt;           manual page',
+      '  apt install &lt;pkg&gt;   install a package',
+      '  hostname            show hostname',
+      '  uname -a            kernel info',
+      '  uptime              system uptime',
+      '  env                 environment variables',
+      '  ps aux              running processes',
+      '  df -h               disk usage',
+      '  free -h             memory usage',
+      '  git log             commit history',
+      '  kubectl             kubernetes commands',
       '',
       '<span class="line-muted">// or click the suggestions below</span>',
     ],
@@ -453,6 +469,77 @@ try {
       '<span class="line-accent">def0123</span> learned kubernetes the hard way',
       '<span class="line-accent">456789f</span> initial commit: born 1987',
     ],
+    // system info
+    hostname: ['shannon-prod-01.local'],
+    'uname -a': ['Linux shannon-prod-01 5.15.0-91-generic #101-Ubuntu SMP Tue Nov 14 13:30:08 UTC 2023 x86_64 GNU/Linux'],
+    uptime: [' 14:22:07 up 847 days, 12:03,  1 user,  load average: 0.42, 0.38, 0.31'],
+    env: [
+      'HOME=/home/john',
+      'SHELL=/bin/zsh',
+      'EDITOR=vim',
+      'PAGER=less',
+      'TERM=xterm-256color',
+      'PATH=/usr/local/bin:/usr/bin:/bin:/home/john/.local/bin',
+      'KUBECONFIG=/home/john/.kube/config',
+      'AWS_DEFAULT_REGION=us-east-2',
+      'COFFEE_CONSUMED=too_much',
+      'ON_CALL=thankfully_not_tonight',
+    ],
+    'ps aux': [
+      '<span class="line-muted">USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span>',
+      'john           1  0.0  0.0   4096   384 ?        Ss   03:41   0:00 /sbin/init',
+      'john         142  0.2  1.4 891204 57344 ?        Sl   03:41   0:23 node server.js',
+      'john         891  0.0  0.0  15360  1024 pts/0    Ss   04:12   0:00 -zsh',
+      'john        1337  4.2  0.8 234567 32768 ?        R    04:58   2:11 <span class="line-error">definitely_not_cryptominer</span>',
+      'john        2048  0.0  0.0  10240   512 pts/0    R+   05:01   0:00 ps aux',
+    ],
+    'df -h': [
+      '<span class="line-muted">Filesystem      Size  Used Avail Use% Mounted on</span>',
+      '/dev/sda1        50G   23G   27G  46% /',
+      'tmpfs           7.8G  1.2G  6.6G  15% /dev/shm',
+      '/dev/sdb1       500G  312G  188G  62% /data',
+      '/dev/sdc1       2.0T  1.8T  200G  90% /backups',
+    ],
+    'free -h': [
+      '<span class="line-muted">              total        used        free      shared  buff/cache   available</span>',
+      'Mem:           15Gi        8.2Gi       3.1Gi     512Mi       4.1Gi       6.8Gi',
+      'Swap:           2Gi          0B         2Gi',
+    ],
+    // dead ends
+    nano: ['<span class="line-error">nano: command not found</span>', '<span class="line-muted">hint: try vim instead.</span>'],
+    brew: ['<span class="line-error">Error: This system is not running macOS.</span>', '<span class="line-muted">hint: try apt instead. just kidding, don\'t.</span>'],
+    exit: ['logout', '<span class="line-muted">Connection to shannon.net closed.</span>'],
+    // kubectl
+    kubectl: [
+      '<span class="line-muted">kubectl controls the Kubernetes cluster manager.</span>',
+      '',
+      '  get         display one or many resources',
+      '  describe    show details of a resource',
+      '  logs        print the logs for a container',
+      '  exec        execute a command in a container',
+      '',
+      '<span class="line-muted">try: kubectl get pods · kubectl get nodes · kubectl get deployments</span>',
+    ],
+    'kubectl get pods': [
+      '<span class="line-muted">NAME                                    READY   STATUS    RESTARTS   AGE</span>',
+      'nginx-deployment-7d4b9c8f6-xk2pl       1/1     Running   0          12d',
+      'postgres-statefulset-0                  1/1     Running   0          45d',
+      'redis-cache-6f8d9b7c5-m9pqr            1/1     Running   2          3d',
+      '<span class="line-error">john-awake-at-3am-7f9b2c8d1-xp4ql      0/1     Pending   42         1h</span>',
+    ],
+    'kubectl get nodes': [
+      '<span class="line-muted">NAME             STATUS   ROLES           AGE    VERSION</span>',
+      'node-prod-01     Ready    control-plane   312d   v1.28.4',
+      'node-prod-02     Ready    &lt;none&gt;          312d   v1.28.4',
+      'node-prod-03     Ready    &lt;none&gt;          312d   v1.28.4',
+    ],
+    'kubectl get deployments': [
+      '<span class="line-muted">NAME               READY   UP-TO-DATE   AVAILABLE   AGE</span>',
+      'nginx-deployment   3/3     3            3           45d',
+      'api-server         2/2     2            2           23d',
+      'worker             1/1     1            1           12d',
+    ],
+
     'cat .secrets': [
       '<span class="line-error">permission denied.</span>',
     ],
@@ -592,6 +679,29 @@ try {
     }
   }
 
+  // ── Fake apt install ─────────────────────────────────────────────
+  async function fakeAptInstall(pkg: string) {
+    const steps = [
+      'Reading package lists... Done',
+      'Building dependency tree... Done',
+      'Reading state information... Done',
+      `The following NEW packages will be installed:\n  ${pkg}`,
+      '0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.',
+      `Unpacking ${pkg} ...`,
+      `Setting up ${pkg} ...`,
+      `<span class="line-accent">${pkg} installed successfully.</span>`,
+      '<span class="line-muted">// just kidding. nothing actually installed.</span>',
+    ];
+    for (const step of steps) {
+      await new Promise(r => setTimeout(r, 180));
+      const div = document.createElement('div');
+      div.className = 'line-output';
+      div.innerHTML = step;
+      outputEl.appendChild(div);
+      scrollBottom();
+    }
+  }
+
   // ── Command runner ───────────────────────────────────────────────
   function runCommand(raw: string) {
     const cmd = raw.trim();
@@ -603,6 +713,190 @@ try {
     if (lower === 'clear') {
       outputEl.innerHTML = '';
       scrollBottom();
+      return;
+    }
+
+    // history
+    if (lower === 'history') {
+      if (history.length === 0) {
+        appendOutput(['<span class="line-muted">no commands in history</span>']);
+      } else {
+        appendOutput([...history].reverse().map((c, i) => `  ${i + 1}  ${c}`));
+      }
+      scrollBottom();
+      return;
+    }
+
+    // pwd
+    if (lower === 'pwd') {
+      appendOutput([currentDir === '~' ? '/home/john' : '/home/john/projects']);
+      scrollBottom();
+      return;
+    }
+
+    // date
+    if (lower === 'date') {
+      appendOutput([new Date().toString()]);
+      scrollBottom();
+      return;
+    }
+
+    // echo
+    if (lower === 'echo' || lower.startsWith('echo ')) {
+      appendOutput([cmd.slice(5)]);
+      scrollBottom();
+      return;
+    }
+
+    // which
+    if (lower.startsWith('which ')) {
+      const whichCmd = lower.slice(6).trim();
+      const paths: Record<string, string> = {
+        python: '/usr/bin/python3', python3: '/usr/bin/python3',
+        bash: '/bin/bash', zsh: '/bin/zsh', sh: '/bin/sh',
+        vim: '/usr/bin/vim', vi: '/usr/bin/vim',
+        git: '/usr/bin/git', node: '/usr/local/bin/node',
+        npm: '/usr/local/bin/npm', docker: '/usr/bin/docker',
+        kubectl: '/usr/local/bin/kubectl', terraform: '/usr/local/bin/terraform',
+        ansible: '/usr/bin/ansible', aws: '/usr/local/bin/aws',
+        curl: '/usr/bin/curl', wget: '/usr/bin/wget',
+        grep: '/usr/bin/grep', ls: '/bin/ls', cat: '/bin/cat',
+        less: '/usr/bin/less', more: '/usr/bin/more',
+      };
+      appendOutput(paths[whichCmd]
+        ? [paths[whichCmd]]
+        : [`<span class="line-error">which: no ${whichCmd} in (/usr/local/bin:/usr/bin:/bin:/home/john/.local/bin)</span>`]
+      );
+      scrollBottom();
+      return;
+    }
+
+    // ping
+    if (lower.startsWith('ping ')) {
+      const host = cmd.slice(5).trim().toLowerCase();
+      const special: Record<string, string[]> = {
+        localhost: [
+          'PING localhost (127.0.0.1): 56 data bytes',
+          '64 bytes from 127.0.0.1: icmp_seq=0 ttl=64 time=0.042 ms',
+          '64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.038 ms',
+          '--- localhost ping statistics ---',
+          '2 packets transmitted, 2 received, 0% packet loss',
+        ],
+        production: [
+          'PING production (10.0.1.42): 56 data bytes',
+          'Request timeout for icmp_seq 0',
+          'Request timeout for icmp_seq 1',
+          'Request timeout for icmp_seq 2',
+          '--- production ping statistics ---',
+          '<span class="line-error">3 packets transmitted, 0 received, 100% packet loss</span>',
+          '<span class="line-muted">// as expected</span>',
+        ],
+      };
+      if (special[host]) {
+        appendOutput(special[host]);
+      } else {
+        const ip = `${~~(Math.random()*200+20)}.${~~(Math.random()*255)}.${~~(Math.random()*255)}.${~~(Math.random()*255)}`;
+        appendOutput([
+          `PING ${host} (${ip}): 56 data bytes`,
+          `64 bytes from ${ip}: icmp_seq=0 ttl=117 time=${(Math.random()*20+5).toFixed(1)} ms`,
+          `64 bytes from ${ip}: icmp_seq=1 ttl=117 time=${(Math.random()*20+5).toFixed(1)} ms`,
+          `64 bytes from ${ip}: icmp_seq=2 ttl=117 time=${(Math.random()*20+5).toFixed(1)} ms`,
+          '^C',
+          `--- ${host} ping statistics ---`,
+          '3 packets transmitted, 3 received, 0% packet loss',
+        ]);
+      }
+      scrollBottom();
+      return;
+    }
+
+    // curl
+    if (lower.startsWith('curl ')) {
+      const url = cmd.slice(5).trim().toLowerCase();
+      if (url.includes('wttr.in') || url.includes('weather')) {
+        appendOutput([
+          'Weather for Denver, CO:',
+          '',
+          '    \\  /  Partly Cloudy',
+          '  _ /"".-.     55 °F',
+          '    \\_(   ).   \u2192 12 mph',
+          '    /(___(__)  10 mi visibility',
+          '',
+          '<span class="line-muted">// good hiking weather. go outside.</span>',
+        ]);
+      } else if (url.includes('icanhazip') || url.includes('ifconfig.me')) {
+        appendOutput(['192.168.1.42']);
+      } else {
+        appendOutput([`<span class="line-error">curl: (7) Failed to connect to ${url.replace(/^https?:\/\//, '')}: Connection refused</span>`]);
+      }
+      scrollBottom();
+      return;
+    }
+
+    // man
+    if (lower.startsWith('man ')) {
+      const manCmd = lower.slice(4).trim();
+      const pages: Record<string, string[]> = {
+        ls: [
+          'LS(1)                     User Commands                     LS(1)',
+          '', 'NAME', '       ls — list directory contents',
+          '', 'SYNOPSIS', '       ls [-la] [directory]',
+          '', 'DESCRIPTION',
+          '       List files in the current directory.',
+          '       -l    use long listing format',
+          '       -a    include hidden files',
+        ],
+        vim: [
+          'VIM(1)                    User Commands                     VIM(1)',
+          '', 'NAME', '       vim — Vi IMproved, a programmer\'s text editor',
+          '', 'SYNOPSIS', '       vim [file]',
+          '', 'DESCRIPTION',
+          '       A highly configurable text editor.',
+          '       :q    quit           i     insert mode',
+          '       :wq   write & quit   Esc   normal mode',
+          '', '<span class="line-muted">// good luck getting out</span>',
+        ],
+        john: [
+          'JOHN(1)                   User Commands                     JOHN(1)',
+          '', 'NAME', '       john — sr. site reliability engineer',
+          '', 'SYNOPSIS', '       john [--guitar] [--cook] [--floss]',
+          '', 'DESCRIPTION',
+          '       Keeps software running in production.',
+          '       Based in Colorado. Generally reliable.',
+          '', 'OPTIONS',
+          '       --guitar    plays guitar, results may vary',
+          '       --cook      cooks experimentally, usually edible',
+          '       --floss     no exceptions',
+          '', 'SEE ALSO', '       cat about.txt, cat contact.txt',
+        ],
+        git: [
+          'GIT(1)                    User Commands                     GIT(1)',
+          '', 'NAME', '       git — the stupid content tracker',
+          '', 'COMMON COMMANDS',
+          '       git log           show commit history',
+          '       git log --oneline one line per commit',
+          '', '<span class="line-muted">try: git log, git log --oneline</span>',
+        ],
+        kubectl: [
+          'KUBECTL(1)                User Commands                  KUBECTL(1)',
+          '', 'NAME', '       kubectl — kubernetes cluster manager',
+          '', 'COMMON COMMANDS',
+          '       kubectl get pods         list running pods',
+          '       kubectl get nodes        list cluster nodes',
+          '       kubectl get deployments  list deployments',
+        ],
+      };
+      appendOutput(pages[manCmd]
+        ?? [`<span class="line-error">No manual entry for ${manCmd}</span>`]
+      );
+      scrollBottom();
+      return;
+    }
+
+    // apt install
+    if (lower.startsWith('apt install') || lower.startsWith('apt-get install')) {
+      const pkg = cmd.split(' ').slice(2).join(' ') || '<package>';
+      fakeAptInstall(pkg);
       return;
     }
 
@@ -689,7 +983,7 @@ try {
   let historyIndex = -1;
 
   const completions = [
-    'whoami', 'help', 'clear',
+    'whoami', 'help', 'clear', 'history', 'pwd', 'date',
     'ls', 'ls -la',
     'cd projects/', 'cd ..', 'cd ~',
     'cat about.txt', 'cat skills.txt', 'cat contact.txt',
@@ -698,6 +992,14 @@ try {
     'vim about.txt', 'vim skills.txt', 'vim contact.txt',
     'vi about.txt', 'vi skills.txt', 'vi contact.txt',
     'git log', 'git log --oneline',
+    'hostname', 'uname -a', 'uptime', 'env', 'ps aux', 'df -h', 'free -h',
+    'kubectl', 'kubectl get pods', 'kubectl get nodes', 'kubectl get deployments',
+    'ping localhost', 'ping production',
+    'curl wttr.in', 'curl icanhazip.com',
+    'man vim', 'man git', 'man john', 'man kubectl', 'man ls',
+    'which vim', 'which python', 'which kubectl', 'which terraform',
+    'echo hello', 'apt install vim',
+    'sudo', 'nano', 'brew', 'exit',
   ];
 
   document.addEventListener('keydown', (e) => {
