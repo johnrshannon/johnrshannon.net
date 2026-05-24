@@ -3,22 +3,22 @@ import Layout from '../layouts/Layout.astro';
 
 const projects = [
   {
-    name: "Project One",
-    description: "A short description of what this project does and why it's interesting to the world.",
+    name: "sentry-gate",
+    description: "Kubernetes admission controller that enforces observability standards at deploy time. Rejects pods missing probes, resource limits, or required logging labels. Configured via CRD — no restarts needed.",
     url: "https://github.com/johnrshannon",
-    tags: ["TypeScript", "Node.js"],
+    tags: ["Go", "Kubernetes", "Helm"],
   },
   {
-    name: "Project Two",
-    description: "A short description of what this project does and why it's interesting to the world.",
+    name: "pipeline-delta",
+    description: "Lightweight change data capture for PostgreSQL. Tails the WAL and streams row-level changes to S3, Redshift, or Kafka. Handles schema migrations gracefully. No Debezium, no JVM.",
     url: "https://github.com/johnrshannon",
-    tags: ["Python", "AWS"],
+    tags: ["Python", "PostgreSQL", "AWS"],
   },
   {
-    name: "Project Three",
-    description: "A short description of what this project does and why it's interesting to the world.",
+    name: "burndown",
+    description: "Terminal dashboard for SRE on-call metrics. Pulls from PagerDuty and Datadog to show error budget burn rate, MTTR, and incident frequency over rolling windows. Fits in a tmux pane.",
     url: "https://github.com/johnrshannon",
-    tags: ["React", "TypeScript"],
+    tags: ["Python", "PagerDuty", "Datadog"],
   },
 ];
 
