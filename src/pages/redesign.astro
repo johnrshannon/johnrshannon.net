@@ -443,11 +443,9 @@ try {
     ],
     '~/projects': [
       '<span class="line-muted">drwxr-xr-x</span>  sentry-gate/',
-      '<span class="line-muted">drwxr-xr-x</span>  pipeline-delta/',
       '<span class="line-muted">drwxr-xr-x</span>  burndown/',
     ],
     '~/projects/sentry-gate':   ['<span class="line-muted">-rw-r--r--</span>  README.md'],
-    '~/projects/pipeline-delta': ['<span class="line-muted">-rw-r--r--</span>  README.md'],
     '~/projects/burndown':       ['<span class="line-muted">-rw-r--r--</span>  README.md'],
     '~/dotfiles': [
       '<span class="line-muted">-rw-r--r--</span>  .vimrc',
@@ -481,7 +479,6 @@ try {
     },
     '~/projects': {
       'sentry-gate/':    'color:var(--prompt);font-size:1em',
-      'pipeline-delta/': 'color:var(--prompt);font-size:1em',
       'burndown/':       'color:var(--prompt);font-size:1em',
     },
     '~/scripts': {
@@ -494,16 +491,18 @@ try {
   // ── File contents (shared by cat / less / more / vim) ────────────
   const files: Record<string, string[]> = {
     'skills.txt': [
-      'languages    Python · Bash · SQL · TypeScript',
-      'cloud        AWS · Terraform · Ansible',
+      'languages    Python · Java · JavaScript · Go · Bash · TypeScript · SQL',
       'containers   Docker · Kubernetes · Helm',
-      'data         PostgreSQL · dbt · Spark',
+      'infra        Terraform · Ansible · Linux · AWS',
+      'databases    PostgreSQL · Redis · Elasticsearch',
+      'streaming    Kafka · RabbitMQ · SQS · Kinesis',
       'ci/cd        GitHub Actions · ArgoCD · Jenkins',
-      'os           Linux (obviously)',
+      'observ.      Dynatrace · Prometheus · Grafana · Datadog · PagerDuty',
     ],
     'contact.txt': [
-      'email   john.ryland.shannon@gmail.com',
-      'github  github.com/johnrshannon',
+      'email     john.ryland.shannon@gmail.com',
+      'github    github.com/johnrshannon',
+      'linkedin  linkedin.com/in/john-shannon-1703878b',
     ],
     'TODO.md': [
       '# TODO',
@@ -574,23 +573,10 @@ try {
       'standards across all workloads at deploy time.',
       '',
       'Rejects pods missing liveness/readiness probes, resource limits,',
-      'or required logging labels. Configured via CRD — no restarts needed.',
+      'or required logging labels. Configured via CRD with no restarts needed.',
       '',
       'stack    Go · Kubernetes · controller-runtime · Helm',
       'status   production · ~40 deployments gated daily',
-    ],
-    '~/projects/pipeline-delta/README.md': [
-      '# pipeline-delta',
-      '',
-      'Lightweight change data capture for PostgreSQL.',
-      'Tails the WAL and streams row-level changes to a configurable',
-      'set of sinks: S3, Redshift, or a Kafka topic.',
-      '',
-      'Handles schema migrations gracefully. Sub-second latency',
-      'at modest throughput. No Debezium, no JVM.',
-      '',
-      'stack    Python · PostgreSQL logical replication · boto3',
-      'status   running in two environments, handles ~2M events/day',
     ],
     '~/projects/burndown/README.md': [
       '# burndown',
@@ -1236,14 +1222,17 @@ try {
         john: [
           'JOHN(1)                   User Commands                     JOHN(1)',
           '', 'NAME', '       john — sr. site reliability engineer',
-          '', 'SYNOPSIS', '       john [--guitar] [--cook] [--floss]',
+          '', 'SYNOPSIS', '       john [--guitar] [--cook] [--floss] [--keyboards] [--homelabs] [--languages]',
           '', 'DESCRIPTION',
           '       Keeps software running in production.',
           '       Based in Colorado. Generally reliable.',
           '', 'OPTIONS',
-          '       --guitar    plays guitar, results may vary',
-          '       --cook      cooks experimentally, usually edible',
-          '       --floss     no exceptions',
+          '       --guitar      plays guitar, results may vary',
+          '       --cook        cooks experimentally, usually edible',
+          '       --floss       no exceptions',
+          '       --keyboards   mechanical, obviously',
+          '       --homelabs    probably overengineered',
+          '       --languages   several human ones, ask me',
           '', 'SEE ALSO', '       cat about.txt, cat contact.txt',
         ],
         git: [
@@ -1305,7 +1294,7 @@ try {
       scrollBottom();
       return;
     }
-    const cdProjectMatch = lower.match(/^cd (sentry-gate|pipeline-delta|burndown)\/?$/);
+    const cdProjectMatch = lower.match(/^cd (sentry-gate|burndown)\/?$/);
     if (cdProjectMatch) {
       if (currentDir !== '~/projects') {
         appendOutput([`<span class="line-error">cd: ${cdProjectMatch[1]}: No such file or directory</span>`]);
@@ -1419,7 +1408,7 @@ try {
     } else if (currentDir === '~/projects') {
       return [
         ...baseCompletions,
-        'cd sentry-gate', 'cd pipeline-delta', 'cd burndown', 'cd ..', 'cd ~',
+        'cd sentry-gate', 'cd burndown', 'cd ..', 'cd ~',
       ];
     } else if (currentDir.startsWith('~/projects/')) {
       return [
