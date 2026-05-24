@@ -1,5 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { execSync } from 'child_process';
+
+let commitHash = 'unknown';
+let commitTime = 'unknown';
+
+try {
+  commitHash = execSync('git rev-parse --short HEAD').toString().trim();
+  commitTime = execSync('git log -1 --format=%cd --date=format:"%Y-%m-%d %H:%M UTC"').toString().trim();
+} catch (e) {}
 
 const projects = [
   {
@@ -177,10 +186,12 @@ const skills = [
   <footer>
     <div class="container footer-inner">
       <span>© 2026 John Shannon</span>
+      <span class="build-info" id="buildFooter"></span>
       <a href="#" class="back-to-top">Back to top ↑</a>
     </div>
   </footer>
 
+  <div id="buildInfo" data-hash={commitHash} data-time={commitTime} style="display:none"></div>
   <button class="scroll-top" id="scrollTop" aria-label="Back to top">↑</button>
 </Layout>
 
@@ -567,24 +578,28 @@ const skills = [
     color: var(--text);
   }
 
+  .build-info {
+    font-size: 0.72rem;
+    color: #333;
+  }
+
   /* Scroll to top button */
   .scroll-top {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    width: 90px;
-    height: 90px;
-    border-radius: 16px;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
     background: var(--surface);
     border: 1px solid var(--border);
     color: var(--muted);
-    font-size: 3rem;
+    font-size: 1.25rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     line-height: 1;
-    padding-bottom: 18px;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s, color 0.2s, border-color 0.2s;
@@ -652,6 +667,10 @@ const skills = [
 </style>
 
 <script>
+  const buildInfo = document.getElementById('buildInfo') as HTMLElement;
+  const buildFooter = document.getElementById('buildFooter')!;
+  buildFooter.textContent = `build ${buildInfo.dataset.hash} · deployed ${buildInfo.dataset.time}`;
+
   // Scroll reveal
   const observer = new IntersectionObserver(
     (entries) => {
