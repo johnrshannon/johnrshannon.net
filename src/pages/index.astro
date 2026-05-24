@@ -7,12 +7,14 @@ const projects = [
     description: "Kubernetes admission controller that enforces observability standards at deploy time. Rejects pods missing probes, resource limits, or required logging labels. Configured via CRD — no restarts needed.",
     url: "https://github.com/johnrshannon/sentry-gate",
     tags: ["Go", "Kubernetes", "Helm"],
+    private: true,
   },
   {
     name: "burndown",
     description: "Terminal dashboard for SRE on-call metrics. Pulls from PagerDuty and Datadog to show error budget burn rate, MTTR, and incident frequency over rolling windows. Fits in a tmux pane.",
     url: "https://github.com/johnrshannon/burndown",
     tags: ["Python", "PagerDuty", "Datadog"],
+    private: true,
   },
   {
     name: "this site (alt)",
@@ -98,6 +100,7 @@ const skills = [
         {projects.map((project) => (
           <a href={project.url} target="_blank" rel="noopener" class="project-card reveal">
             <div class="project-card-inner">
+              {project.private && <span class="private-label">private</span>}
               <h3>{project.name}</h3>
               <p>{project.description}</p>
               <div class="tags">
@@ -385,6 +388,7 @@ const skills = [
     flex-direction: column;
     gap: 0.75rem;
     height: 100%;
+    position: relative;
   }
 
   .project-card h3 {
@@ -415,6 +419,17 @@ const skills = [
     color: var(--muted);
     font-weight: 500;
     letter-spacing: 0.02em;
+  }
+
+  .private-label {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: #444;
+    font-style: italic;
   }
 
   /* Contact */
