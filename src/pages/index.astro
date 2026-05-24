@@ -41,7 +41,6 @@ const skills = [
         <a href="#about">About</a>
         <a href="#projects">Projects</a>
         <a href="#contact">Contact</a>
-        <a href="https://github.com/johnrshannon" target="_blank" rel="noopener">GitHub ↗</a>
       </div>
     </div>
   </nav>
@@ -125,10 +124,17 @@ const skills = [
   <section class="contact reveal" id="contact">
     <div class="container">
       <h2 class="section-title">Get in touch</h2>
-      <p class="contact-sub">I'm always open to interesting conversations.</p>
-      <a href="mailto:john.ryland.shannon@gmail.com" class="btn btn-primary">
-        john.ryland.shannon@gmail.com
-      </a>
+<div class="contact-links">
+        <a href="mailto:john.ryland.shannon@gmail.com" class="btn btn-primary">
+          john.ryland.shannon@gmail.com
+        </a>
+        <a href="https://github.com/johnrshannon" target="_blank" rel="noopener" class="btn btn-github">
+          GitHub ↗
+        </a>
+        <a href="https://www.linkedin.com/in/john-shannon-1703878b/" target="_blank" rel="noopener" class="btn btn-linkedin">
+          LinkedIn ↗
+        </a>
+      </div>
     </div>
   </section>
 
@@ -273,6 +279,16 @@ const skills = [
   .btn-ghost {
     border: 1px solid var(--border);
     color: var(--text);
+  }
+
+  .btn-github {
+    background: #f0f0f0;
+    color: #0a0a0a;
+  }
+
+  .btn-linkedin {
+    background: #0a66c2;
+    color: #fff;
   }
 
   /* About */
@@ -424,6 +440,12 @@ const skills = [
     color: var(--muted);
     margin-bottom: 2rem;
     font-size: 1.05rem;
+  }
+
+  .contact-links {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
 
   /* Footer */
