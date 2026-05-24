@@ -29,9 +29,13 @@ const projects = [
 ];
 
 const skills = [
-  "Python", "Go", "Bash", "SQL", "TypeScript",
-  "Docker", "Kubernetes", "Terraform", "Ansible",
-  "AWS", "CI/CD", "PostgreSQL", "Linux",
+  { category: "Languages",                  items: ["Python", "Java", "JavaScript", "Go", "Bash", "TypeScript", "SQL"] },
+  { category: "Containers & Orchestration", items: ["Docker", "Kubernetes", "Helm"] },
+  { category: "Infrastructure",             items: ["Terraform", "Ansible", "Linux", "AWS"] },
+  { category: "Databases",                  items: ["PostgreSQL", "Redis", "Elasticsearch"] },
+  { category: "Streaming & Messaging",      items: ["Kafka", "RabbitMQ", "SQS", "Kinesis"] },
+  { category: "CI/CD",                      items: ["GitHub Actions", "ArgoCD", "Jenkins"] },
+  { category: "Observability",              items: ["Dynatrace", "Prometheus", "Grafana", "Datadog", "PagerDuty"] },
 ];
 ---
 
@@ -84,9 +88,16 @@ const skills = [
       </div>
       <div class="about-skills">
         <h3 class="skills-label">Technologies</h3>
-        <div class="skills-grid">
-          {skills.map((skill) => (
-            <span class="skill-tag">{skill}</span>
+        <div class="skill-categories">
+          {skills.map(({ category, items }) => (
+            <div class="skill-group">
+              <span class="skill-group-label">{category}</span>
+              <div class="skills-grid">
+                {items.map((skill) => (
+                  <span class="skill-tag">{skill}</span>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </div>
@@ -293,12 +304,29 @@ const skills = [
 
   .skills-label {
     font-family: var(--font-display);
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
     margin-bottom: 1rem;
+  }
+
+  .skill-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .skill-group-label {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+    opacity: 0.6;
   }
 
   .skills-grid {
